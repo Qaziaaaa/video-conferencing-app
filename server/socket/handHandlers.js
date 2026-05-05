@@ -13,13 +13,10 @@ const registerHandHandlers = (io, socket, rooms) => {
       room.set(socket.id, meta);
     }
 
-    // Relay to all other participants
     socket.to(meetingId).emit('raise-hand', {
       socketId: socket.id,
-      displayName: displayName || socket.data.displayName,
+      displayName: displayName || socket.data.displayName || 'Someone',
     });
-
-    console.log(`[HAND] ${socket.id} raised hand in ${meetingId}`);
   });
 
   // lower-hand: { meetingId }
@@ -34,8 +31,6 @@ const registerHandHandlers = (io, socket, rooms) => {
     }
 
     socket.to(meetingId).emit('lower-hand', { socketId: socket.id });
-
-    console.log(`[HAND] ${socket.id} lowered hand in ${meetingId}`);
   });
 };
 

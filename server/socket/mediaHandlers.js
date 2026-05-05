@@ -1,5 +1,5 @@
 /**
- * Media state handlers: mute/camera state sync, screen sharing
+ * Media state handlers: participant-media-state, screen-share-started, screen-share-stopped
  */
 const registerMediaHandlers = (io, socket, rooms) => {
   // participant-media-state: { meetingId, isMuted, isCameraOff }
@@ -24,30 +24,28 @@ const registerMediaHandlers = (io, socket, rooms) => {
   });
 
   // screen-share-started: { meetingId }
-  // Enforce one-at-a-time: check if anyone else is already sharing
   socket.on('screen-share-started', ({ meetingId }) => {
     if (!meetingId) return;
 
+    // Check if someone is already sharing — enforce one-at-a-time
     const room = rooms.get(meetingId);
     if (room) {
-      // Check if another participant is already sharing
       for (const [sid, meta] of room.entries()) {
-        if (sid !== socket.id && meta.isScreenSharing) {
-          socket.emit('error-msg', { message: 'Screen sharing is already active' });
+        if (meta.isScreenSharing && sid !== socket.id) {
+          socket.emit('error-msg', { message: 'Screen sharing is already active in this meeting' });
           return;
         }
       }
 
       // Mark this participant as screen sharing
-      if (room.has(socket.id)) {
-        const meta = room.get(socket.id);
+      const meta = room.get(socket.id);
+      if (meta) {
         meta.isScreenSharing = true;
         room.set(socket.id, meta);
       }
     }
 
     socket.to(meetingId).emit('screen-share-started', { socketId: socket.id });
-    console.log(`[MEDIA] Screen share started by ${socket.id} in ${meetingId}`);
   });
 
   // screen-share-stopped: { meetingId }
@@ -62,7 +60,6 @@ const registerMediaHandlers = (io, socket, rooms) => {
     }
 
     socket.to(meetingId).emit('screen-share-stopped', { socketId: socket.id });
-    console.log(`[MEDIA] Screen share stopped by ${socket.id} in ${meetingId}`);
   });
 };
 

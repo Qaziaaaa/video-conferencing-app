@@ -1,9 +1,8 @@
 /**
- * Admin/host control handlers: kick participant, host transfer
+ * Admin handlers: kick-participant
  */
 const registerAdminHandlers = (io, socket, rooms) => {
   // kick-participant: { meetingId, targetSocketId }
-  // Only the host can kick participants
   socket.on('kick-participant', ({ meetingId, targetSocketId }) => {
     if (!meetingId || !targetSocketId) return;
 
@@ -18,39 +17,25 @@ const registerAdminHandlers = (io, socket, rooms) => {
     }
 
     // Cannot kick yourself
-    if (targetSocketId === socket.id) {
-      socket.emit('error-msg', { message: 'You cannot remove yourself' });
-      return;
-    }
+    if (targetSocketId === socket.id) return;
 
     const targetMeta = room.get(targetSocketId);
-    if (!targetMeta) {
-      socket.emit('error-msg', { message: 'Participant not found' });
-      return;
-    }
-
-    console.log(`[ADMIN] Host ${socket.id} kicked ${targetSocketId} from ${meetingId}`);
+    if (!targetMeta) return;
 
     // Notify the kicked participant
     io.to(targetSocketId).emit('you-were-removed', {});
 
-    // Notify all remaining participants (room handler will clean up on disconnect,
-    // but we emit user-left immediately for fast UI update)
-    io.to(meetingId).emit('user-left', {
+    // Notify remaining participants (the kicked user's disconnect will trigger user-left,
+    // but we also emit it proactively so the UI updates immediately)
+    socket.to(meetingId).emit('user-left', {
       socketId: targetSocketId,
       displayName: targetMeta.displayName,
     });
 
-    // Remove from room state immediately
+    // Remove from room state
     room.delete(targetSocketId);
 
-    // Force disconnect the kicked socket
-    const kickedSocket = io.sockets.sockets.get(targetSocketId);
-    if (kickedSocket) {
-      kickedSocket.data.meetingId = null; // prevent double user-left on disconnect
-      kickedSocket.leave(meetingId);
-      kickedSocket.disconnect(true);
-    }
+    console.log(`[ADMIN] ${socket.id} kicked ${targetSocketId} from ${meetingId}`);
   });
 };
 

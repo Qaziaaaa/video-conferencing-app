@@ -1,14 +1,14 @@
 const ChatMessage = require('../models/ChatMessage');
 
 /**
- * Chat handlers: real-time message relay + MongoDB persistence
+ * Chat handlers: chat-message
  */
 const registerChatHandlers = (io, socket, rooms) => {
   // chat-message: { meetingId, senderName, text, timestamp }
   socket.on('chat-message', async ({ meetingId, senderName, text, timestamp }) => {
     if (!meetingId || !senderName || !text) return;
 
-    // Validate message length
+    // Validate text length
     if (typeof text !== 'string' || text.trim().length === 0) {
       socket.emit('error-msg', { message: 'Message cannot be empty' });
       return;
@@ -21,25 +21,23 @@ const registerChatHandlers = (io, socket, rooms) => {
 
     try {
       // Persist to MongoDB
-      const saved = await ChatMessage.create({
+      const msg = await ChatMessage.create({
         meetingId,
         senderName: senderName.trim(),
         text: text.trim(),
         timestamp: timestamp ? new Date(timestamp) : new Date(),
       });
 
-      const messagePayload = {
-        _id: saved._id,
-        meetingId: saved.meetingId,
-        senderName: saved.senderName,
-        text: saved.text,
-        timestamp: saved.timestamp,
+      const payload = {
+        _id: msg._id,
+        meetingId: msg.meetingId,
+        senderName: msg.senderName,
+        text: msg.text,
+        timestamp: msg.timestamp.toISOString(),
       };
 
-      // Relay to ALL participants in the room (including sender for confirmation)
-      io.to(meetingId).emit('chat-message', messagePayload);
-
-      console.log(`[CHAT] Message in ${meetingId} from ${senderName}: ${text.slice(0, 50)}`);
+      // Relay to ALL participants in the room (including sender)
+      io.to(meetingId).emit('chat-message', payload);
     } catch (err) {
       console.error('[CHAT] Failed to save message:', err);
       socket.emit('error-msg', { message: 'Failed to send message' });

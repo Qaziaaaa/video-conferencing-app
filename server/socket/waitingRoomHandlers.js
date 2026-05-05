@@ -1,9 +1,8 @@
 /**
- * Waiting room handlers: admit/deny participants
+ * Waiting room handlers: admit-participant, deny-participant
  */
 const registerWaitingRoomHandlers = (io, socket, rooms) => {
-  // admit-participant: { meetingId, targetSocketId }
-  // Host admits a waiting participant into the room
+  // admit-participant: { meetingId, targetSocketId } — host admits a waiting participant
   socket.on('admit-participant', async ({ meetingId, targetSocketId }) => {
     if (!meetingId || !targetSocketId) return;
 
@@ -17,60 +16,13 @@ const registerWaitingRoomHandlers = (io, socket, rooms) => {
       return;
     }
 
-    // Check room capacity
-    if (room.size >= 8) {
-      socket.emit('error-msg', { message: 'Room is full' });
-      io.to(targetSocketId).emit('room-full', {});
-      return;
-    }
+    // Notify the waiting participant they've been admitted
+    io.to(targetSocketId).emit('admitted', { meetingId });
 
-    const targetSocket = io.sockets.sockets.get(targetSocketId);
-    if (!targetSocket) {
-      socket.emit('error-msg', { message: 'Participant is no longer waiting' });
-      return;
-    }
-
-    const displayName = targetSocket.data.displayName || 'Guest';
-
-    // Add to room
-    const participantMeta = {
-      socketId: targetSocketId,
-      displayName,
-      isMuted: false,
-      isCameraOff: false,
-      isHandRaised: false,
-      isScreenSharing: false,
-      isHost: false,
-      joinedAt: Date.now(),
-    };
-
-    const existingParticipants = Array.from(room.values());
-    room.set(targetSocketId, participantMeta);
-
-    targetSocket.join(meetingId);
-    targetSocket.data.meetingId = meetingId;
-    targetSocket.data.waitingFor = null;
-
-    // Tell the admitted participant they're in
-    io.to(targetSocketId).emit('admitted', {});
-    io.to(targetSocketId).emit('room-joined', {
-      meetingId,
-      socketId: targetSocketId,
-      isHost: false,
-      existingParticipants,
-    });
-
-    // Notify existing participants
-    socket.to(meetingId).emit('user-joined', {
-      socketId: targetSocketId,
-      displayName,
-      isHost: false,
-    });
-
-    console.log(`[WAITING] ${targetSocketId} (${displayName}) admitted to ${meetingId}`);
+    console.log(`[WAITING] ${socket.id} admitted ${targetSocketId} to ${meetingId}`);
   });
 
-  // deny-participant: { meetingId, targetSocketId }
+  // deny-participant: { meetingId, targetSocketId } — host denies a waiting participant
   socket.on('deny-participant', ({ meetingId, targetSocketId }) => {
     if (!meetingId || !targetSocketId) return;
 
@@ -84,8 +36,10 @@ const registerWaitingRoomHandlers = (io, socket, rooms) => {
       return;
     }
 
+    // Notify the waiting participant they've been denied
     io.to(targetSocketId).emit('denied', {});
-    console.log(`[WAITING] ${targetSocketId} denied entry to ${meetingId}`);
+
+    console.log(`[WAITING] ${socket.id} denied ${targetSocketId} from ${meetingId}`);
   });
 };
 
