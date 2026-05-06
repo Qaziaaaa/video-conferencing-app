@@ -16,17 +16,17 @@ const NotificationStack = () => {
       {notifications.map((notif) => (
         <div
           key={notif.id}
-          className="flex items-center gap-3 px-4 py-3 bg-[#1a1a2e]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl text-sm text-white pointer-events-auto animate-[slideInLeft_0.25s_ease-out]"
+          className="flex items-center gap-3 px-4 py-2.5 bg-[#1a1a2e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl text-sm text-white pointer-events-auto animate-[slideInLeft_0.2s_ease-out]"
           style={{ maxWidth: '280px' }}
         >
-          <div className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
-          <span className="flex-1 text-slate-200 text-xs leading-snug">{notif.message}</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+          <span className="text-slate-200 text-xs leading-snug">{notif.message}</span>
           <button
             onClick={() => removeNotification(notif.id)}
             aria-label="Dismiss notification"
-            className="text-slate-500 hover:text-white transition-colors flex-shrink-0 text-xs"
+            className="ml-auto flex-shrink-0 text-slate-500 hover:text-white transition-colors"
           >
-            ✕
+            ×
           </button>
         </div>
       ))}

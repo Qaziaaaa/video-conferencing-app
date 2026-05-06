@@ -4,7 +4,7 @@ import { PhoneOff, X } from 'lucide-react';
 const ConfirmDialog = ({ isOpen, onConfirm, onCancel }) => {
   const confirmBtnRef = useRef(null);
 
-  // Focus the confirm button when dialog opens (focus trap)
+  // Focus the confirm button when dialog opens (accessibility)
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => confirmBtnRef.current?.focus(), 50);
@@ -50,6 +50,7 @@ const ConfirmDialog = ({ isOpen, onConfirm, onCancel }) => {
           <PhoneOff size={22} className="text-red-400" />
         </div>
 
+        {/* Content */}
         <h2 id="confirm-dialog-title" className="text-lg font-bold text-white mb-2">
           Leave meeting?
         </h2>
@@ -57,6 +58,7 @@ const ConfirmDialog = ({ isOpen, onConfirm, onCancel }) => {
           You'll be disconnected from the call. Others will remain in the meeting.
         </p>
 
+        {/* Actions */}
         <div className="flex gap-3">
           <button
             onClick={onCancel}
