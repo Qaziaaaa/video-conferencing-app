@@ -13,8 +13,8 @@ export const useKeyboardShortcuts = (socket) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Don't fire shortcuts when typing in an input/textarea
-      const tag = e.target.tagName.toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+      const tag = (e.target?.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) return;
 
       const { toggleMic, toggleCam, toggleHand, isMicOn, isCamOn, isHandRaised, meetingId, displayName } = useMeetingStore.getState();
       const { showConfirmLeave } = useUIStore.getState();
@@ -23,10 +23,11 @@ export const useKeyboardShortcuts = (socket) => {
         case 'm':
           e.preventDefault();
           toggleMic();
-          // Emit media state update
+          // After toggleMic, the state will be flipped
+          // Emit the NEW state (isMicOn was true → now muted/isMuted=true)
           socket?.emit('participant-media-state', {
             meetingId,
-            isMuted: isMicOn, // after toggle, isMicOn will be flipped
+            isMuted: isMicOn,   // was ON → now MUTED
             isCameraOff: !isCamOn,
           });
           break;
@@ -34,10 +35,11 @@ export const useKeyboardShortcuts = (socket) => {
         case 'v':
           e.preventDefault();
           toggleCam();
+          // Emit the NEW state (isCamOn was true → now off/isCameraOff=true)
           socket?.emit('participant-media-state', {
             meetingId,
             isMuted: !isMicOn,
-            isCameraOff: isCamOn, // after toggle, isCamOn will be flipped
+            isCameraOff: isCamOn, // was ON → now OFF
           });
           break;
 

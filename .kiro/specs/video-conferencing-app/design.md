@@ -1,4 +1,4 @@
-# Design Document: Video Conferencing App
+﻿# Design Document: Video Conferencing App
 
 ## Overview
 
@@ -6,15 +6,15 @@ This document describes the technical design for transforming the existing 1-to-
 
 The architecture is a three-tier MERN stack:
 
-- **Client** — React 19 / Vite SPA with Tailwind CSS v4, Zustand, Socket.IO client, and the WebRTC browser API.
-- **Signaling Server** — Node.js / Express / Socket.IO backend handling WebRTC signaling, REST API, JWT auth middleware, and MongoDB integration via Mongoose.
-- **Database** — MongoDB storing Meeting documents, Chat_Message documents, and User documents.
+- **Client** â€” React 19 / Vite SPA with Tailwind CSS v4, Zustand, Socket.IO client, and the WebRTC browser API.
+- **Signaling Server** â€” Node.js / Express / Socket.IO backend handling WebRTC signaling, REST API, JWT auth middleware, and MongoDB integration via Mongoose.
+- **Database** â€” MongoDB storing Meeting documents, Chat_Message documents, and User documents.
 
 ### Key Design Decisions
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| WebRTC topology | Full mesh (P2P) | Simplest for ≤8 peers; no SFU infrastructure needed for MVP |
+| WebRTC topology | Full mesh (P2P) | Simplest for â‰¤8 peers; no SFU infrastructure needed for MVP |
 | Signaling transport | Socket.IO | Already in use; handles rooms, namespaces, and reconnection |
 | State management | Zustand | Already in use; minimal boilerplate, fine-grained subscriptions |
 | Auth token storage | In-memory (React state / closure) | Prevents XSS token theft vs. localStorage |
@@ -35,7 +35,7 @@ graph TB
         Hooks["Custom Hooks\n(useWebRTC, useChat, useAuth)"]
         Store["Zustand Store\n(meeting, auth, chat, ui)"]
         WS_Client["Socket.IO Client"]
-        WebRTC["WebRTC\nRTCPeerConnection × N"]
+        WebRTC["WebRTC\nRTCPeerConnection Ã— N"]
     end
 
     subgraph Server["Signaling Server (Node.js)"]
@@ -108,85 +108,85 @@ sequenceDiagram
 
 ```
 client/src/
-├── App.jsx                          # Router: auth guard → Home | Meeting | Auth pages
-├── main.jsx
-├── index.css
-│
-├── pages/
-│   ├── Home.jsx                     # Landing: create / join meeting
-│   ├── MeetingRoom.jsx              # Main meeting view (orchestrates panels)
-│   ├── PreJoinLobby.jsx             # Camera preview + display name entry
-│   ├── WaitingRoom.jsx              # "Waiting for host" screen
-│   ├── RemovedScreen.jsx            # "You were removed" screen
-│   ├── MeetingNotFound.jsx          # 404 meeting error page
-│   ├── Login.jsx                    # JWT login form
-│   └── Register.jsx                 # JWT register form
-│
-├── components/
-│   ├── layout/
-│   │   └── MeetingLayout.jsx        # Shell: VideoGrid + sidepanels + ControlBar
-│   ├── video/
-│   │   ├── VideoGrid.jsx            # Responsive CSS grid of Tiles
-│   │   ├── Tile.jsx                 # Single participant tile (video or avatar)
-│   │   ├── VideoPlayer.jsx          # <video> element wrapper
-│   │   └── AvatarFallback.jsx       # Initials avatar when camera is off
-│   ├── controls/
-│   │   └── ControlBar.jsx           # Bottom toolbar with all action buttons
-│   ├── chat/
-│   │   ├── ChatPanel.jsx            # Collapsible right-side chat panel
-│   │   ├── ChatMessage.jsx          # Single message bubble
-│   │   └── ChatInput.jsx            # Message input + send button
-│   ├── participants/
-│   │   ├── ParticipantsPanel.jsx    # Collapsible right-side participants list
-│   │   └── ParticipantRow.jsx       # Single participant row with status icons
-│   ├── waiting/
-│   │   └── AdmissionPanel.jsx       # Host's panel showing waiting participants
-│   ├── notifications/
-│   │   └── NotificationStack.jsx    # Toast notification stack (bottom of screen)
-│   └── ui/
-│       ├── ConfirmDialog.jsx        # Escape-to-leave confirmation modal
-│       ├── SkeletonTile.jsx         # Loading skeleton for tiles
-│       └── CopyLinkButton.jsx       # Share URL copy-to-clipboard button
-│
-├── hooks/
-│   ├── useWebRTC.js                 # Mesh peer connection management (refactored)
-│   ├── useChat.js                   # Chat send/receive + history fetch
-│   ├── useAuth.js                   # JWT login/register/token management
-│   ├── useScreenShare.js            # getDisplayMedia + track replacement
-│   ├── useParticipants.js           # Participant list state + events
-│   ├── useNotifications.js          # Toast queue management
-│   └── useKeyboardShortcuts.js      # M, V, H, Escape bindings
-│
-└── store/
-    ├── useMeetingStore.js           # Meeting + WebRTC state (refactored)
-    ├── useAuthStore.js              # JWT token + user identity
-    ├── useChatStore.js              # Chat messages + unread count
-    └── useUIStore.js                # Panel visibility, notifications, dialogs
+â”œâ”€â”€ App.jsx                          # Router: auth guard â†’ Home | Meeting | Auth pages
+â”œâ”€â”€ main.jsx
+â”œâ”€â”€ index.css
+â”‚
+â”œâ”€â”€ pages/
+â”‚   â”œâ”€â”€ Home.jsx                     # Landing: create / join meeting
+â”‚   â”œâ”€â”€ MeetingRoom.jsx              # Main meeting view (orchestrates panels)
+â”‚   â”œâ”€â”€ PreJoinLobby.jsx             # Camera preview + display name entry
+â”‚   â”œâ”€â”€ WaitingRoom.jsx              # "Waiting for host" screen
+â”‚   â”œâ”€â”€ RemovedScreen.jsx            # "You were removed" screen
+â”‚   â”œâ”€â”€ MeetingNotFound.jsx          # 404 meeting error page
+â”‚   â”œâ”€â”€ Login.jsx                    # JWT login form
+â”‚   â””â”€â”€ Register.jsx                 # JWT register form
+â”‚
+â”œâ”€â”€ components/
+â”‚   â”œâ”€â”€ layout/
+â”‚   â”‚   â””â”€â”€ MeetingLayout.jsx        # Shell: VideoGrid + sidepanels + ControlBar
+â”‚   â”œâ”€â”€ video/
+â”‚   â”‚   â”œâ”€â”€ VideoGrid.jsx            # Responsive CSS grid of Tiles
+â”‚   â”‚   â”œâ”€â”€ Tile.jsx                 # Single participant tile (video or avatar)
+â”‚   â”‚   â”œâ”€â”€ VideoPlayer.jsx          # <video> element wrapper
+â”‚   â”‚   â””â”€â”€ AvatarFallback.jsx       # Initials avatar when camera is off
+â”‚   â”œâ”€â”€ controls/
+â”‚   â”‚   â””â”€â”€ ControlBar.jsx           # Bottom toolbar with all action buttons
+â”‚   â”œâ”€â”€ chat/
+â”‚   â”‚   â”œâ”€â”€ ChatPanel.jsx            # Collapsible right-side chat panel
+â”‚   â”‚   â”œâ”€â”€ ChatMessage.jsx          # Single message bubble
+â”‚   â”‚   â””â”€â”€ ChatInput.jsx            # Message input + send button
+â”‚   â”œâ”€â”€ participants/
+â”‚   â”‚   â”œâ”€â”€ ParticipantsPanel.jsx    # Collapsible right-side participants list
+â”‚   â”‚   â””â”€â”€ ParticipantRow.jsx       # Single participant row with status icons
+â”‚   â”œâ”€â”€ waiting/
+â”‚   â”‚   â””â”€â”€ AdmissionPanel.jsx       # Host's panel showing waiting participants
+â”‚   â”œâ”€â”€ notifications/
+â”‚   â”‚   â””â”€â”€ NotificationStack.jsx    # Toast notification stack (bottom of screen)
+â”‚   â””â”€â”€ ui/
+â”‚       â”œâ”€â”€ ConfirmDialog.jsx        # Escape-to-leave confirmation modal
+â”‚       â”œâ”€â”€ SkeletonTile.jsx         # Loading skeleton for tiles
+â”‚       â””â”€â”€ CopyLinkButton.jsx       # Share URL copy-to-clipboard button
+â”‚
+â”œâ”€â”€ hooks/
+â”‚   â”œâ”€â”€ useWebRTC.js                 # Mesh peer connection management (refactored)
+â”‚   â”œâ”€â”€ useChat.js                   # Chat send/receive + history fetch
+â”‚   â”œâ”€â”€ useAuth.js                   # JWT login/register/token management
+â”‚   â”œâ”€â”€ useScreenShare.js            # getDisplayMedia + track replacement
+â”‚   â”œâ”€â”€ useParticipants.js           # Participant list state + events
+â”‚   â”œâ”€â”€ useNotifications.js          # Toast queue management
+â”‚   â””â”€â”€ useKeyboardShortcuts.js      # M, V, H, Escape bindings
+â”‚
+â””â”€â”€ store/
+    â”œâ”€â”€ useMeetingStore.js           # Meeting + WebRTC state (refactored)
+    â”œâ”€â”€ useAuthStore.js              # JWT token + user identity
+    â”œâ”€â”€ useChatStore.js              # Chat messages + unread count
+    â””â”€â”€ useUIStore.js                # Panel visibility, notifications, dialogs
 
 server/
-├── index.js                         # Entry point: Express + Socket.IO bootstrap
-├── config/
-│   └── db.js                        # Mongoose connect + error handling
-├── models/
-│   ├── User.js                      # Mongoose User schema
-│   ├── Meeting.js                   # Mongoose Meeting schema
-│   └── ChatMessage.js               # Mongoose ChatMessage schema
-├── routes/
-│   ├── auth.js                      # POST /api/auth/register, /api/auth/login
-│   └── meetings.js                  # GET /api/meetings/:id, GET /api/meetings/:id/chat
-├── middleware/
-│   └── auth.js                      # JWT verification middleware
-├── socket/
-│   ├── index.js                     # Socket.IO server setup + auth middleware
-│   ├── roomHandlers.js              # join-room, user-joined, user-left, host logic
-│   ├── signalingHandlers.js         # offer, answer, ice-candidate
-│   ├── mediaHandlers.js             # participant-media-state, screen-share events
-│   ├── chatHandlers.js              # chat-message relay + DB persist
-│   ├── handHandlers.js              # raise-hand, lower-hand
-│   ├── adminHandlers.js             # kick-participant, host-changed
-│   └── waitingRoomHandlers.js       # waiting, admit, deny
-└── utils/
-    └── meetingId.js                 # Meeting ID generator (abc-defg-hij format)
+â”œâ”€â”€ index.js                         # Entry point: Express + Socket.IO bootstrap
+â”œâ”€â”€ config/
+â”‚   â””â”€â”€ db.js                        # Mongoose connect + error handling
+â”œâ”€â”€ models/
+â”‚   â”œâ”€â”€ User.js                      # Mongoose User schema
+â”‚   â”œâ”€â”€ Meeting.js                   # Mongoose Meeting schema
+â”‚   â””â”€â”€ ChatMessage.js               # Mongoose ChatMessage schema
+â”œâ”€â”€ routes/
+â”‚   â”œâ”€â”€ auth.js                      # POST /api/auth/register, /api/auth/login
+â”‚   â””â”€â”€ meetings.js                  # GET /api/meetings/:id, GET /api/meetings/:id/chat
+â”œâ”€â”€ middleware/
+â”‚   â””â”€â”€ auth.js                      # JWT verification middleware
+â”œâ”€â”€ socket/
+â”‚   â”œâ”€â”€ index.js                     # Socket.IO server setup + auth middleware
+â”‚   â”œâ”€â”€ roomHandlers.js              # join-room, user-joined, user-left, host logic
+â”‚   â”œâ”€â”€ signalingHandlers.js         # offer, answer, ice-candidate
+â”‚   â”œâ”€â”€ mediaHandlers.js             # participant-media-state, screen-share events
+â”‚   â”œâ”€â”€ chatHandlers.js              # chat-message relay + DB persist
+â”‚   â”œâ”€â”€ handHandlers.js              # raise-hand, lower-hand
+â”‚   â”œâ”€â”€ adminHandlers.js             # kick-participant, host-changed
+â”‚   â””â”€â”€ waitingRoomHandlers.js       # waiting, admit, deny
+â””â”€â”€ utils/
+    â””â”€â”€ meetingId.js                 # Meeting ID generator (abc-defg-hij format)
 ```
 
 ### Component Interface Contracts
@@ -251,7 +251,7 @@ interface UseWebRTCReturn {
 // server/models/User.js
 const UserSchema = new mongoose.Schema({
   email:        { type: String, required: true, unique: true, lowercase: true, trim: true },
-  passwordHash: { type: String, required: true },           // bcrypt, cost factor ≥ 12
+  passwordHash: { type: String, required: true },           // bcrypt, cost factor â‰¥ 12
   displayName:  { type: String, required: true, maxlength: 50 },
   createdAt:    { type: Date, default: Date.now },
 });
@@ -298,10 +298,10 @@ interface MeetingState {
   // Media streams
   localStream: MediaStream | null;
   screenShareStream: MediaStream | null;
-  remoteStreams: Map<string, MediaStream>;       // socketId → stream
+  remoteStreams: Map<string, MediaStream>;       // socketId â†’ stream
 
   // Participant metadata (synced via socket events)
-  participants: Map<string, ParticipantMeta>;   // socketId → meta
+  participants: Map<string, ParticipantMeta>;   // socketId â†’ meta
 
   // Connection state per peer
   connectionStates: Map<string, 'connecting' | 'connected' | 'failed'>;
@@ -391,7 +391,7 @@ interface Notification {
 
 All events are scoped to a Socket.IO room identified by `meetingId`. Payloads are JSON objects.
 
-### Client → Server Events
+### Client â†’ Server Events
 
 | Event | Payload | Description |
 |---|---|---|
@@ -410,7 +410,7 @@ All events are scoped to a Socket.IO room identified by `meetingId`. Payloads ar
 | `deny-participant` | `{ meetingId, targetSocketId }` | Host denies from waiting room |
 | `leave-room` | `{ meetingId }` | Graceful leave before disconnect |
 
-### Server → Client Events
+### Server â†’ Client Events
 
 | Event | Payload | Description |
 |---|---|---|
@@ -479,26 +479,26 @@ The refactored `useWebRTC` hook manages a `Map<socketId, RTCPeerConnection>` ins
 
 ```
 Algorithm: join-room event received (existing participants list)
-─────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Input: existingParticipants = [{ socketId, displayName }, ...]
 
 FOR EACH participant IN existingParticipants:
-  1. Create RTCPeerConnection(pc_config) → pc
-  2. Attach onicecandidate → emit 'ice-candidate' { candidate, targetSocketId: participant.socketId }
-  3. Attach ontrack → store stream in remoteStreams[participant.socketId]
-  4. Attach oniceconnectionstatechange → update connectionStates[participant.socketId]
+  1. Create RTCPeerConnection(pc_config) â†’ pc
+  2. Attach onicecandidate â†’ emit 'ice-candidate' { candidate, targetSocketId: participant.socketId }
+  3. Attach ontrack â†’ store stream in remoteStreams[participant.socketId]
+  4. Attach oniceconnectionstatechange â†’ update connectionStates[participant.socketId]
   5. Add all localStream tracks to pc
-  6. pc.createOffer() → setLocalDescription → emit 'offer' { sdp, targetSocketId }
+  6. pc.createOffer() â†’ setLocalDescription â†’ emit 'offer' { sdp, targetSocketId }
   7. Store pc in peerConnections[participant.socketId]
 
 Algorithm: 'user-joined' event received (newcomer joins after us)
-─────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Input: { socketId, displayName }
 
-1. Create RTCPeerConnection(pc_config) → pc
+1. Create RTCPeerConnection(pc_config) â†’ pc
 2. Attach handlers (same as above, targetSocketId = socketId)
 3. Add all localStream tracks to pc
-4. DO NOT create offer — wait for newcomer's offer
+4. DO NOT create offer â€” wait for newcomer's offer
    (The newcomer creates offers to all existing participants)
 ```
 
@@ -526,7 +526,7 @@ On setRemoteDescription() completes for socketId:
 
 ```
 Algorithm: startScreenShare()
-──────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 1. stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false })
 2. screenTrack = stream.getVideoTracks()[0]
 3. Store originalCameraTrack = localStream.getVideoTracks()[0]
@@ -539,7 +539,7 @@ Algorithm: startScreenShare()
 8. screenTrack.onended = stopScreenShare  // browser native stop button
 
 Algorithm: stopScreenShare()
-──────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 1. FOR EACH pc IN peerConnections.values():
      sender = pc.getSenders().find(s => s.track?.kind === 'video')
      IF sender: await sender.replaceTrack(originalCameraTrack)
@@ -554,8 +554,8 @@ Algorithm: stopScreenShare()
 ### 4. ICE Restart on Failure
 
 ```
-Algorithm: oniceconnectionstatechange → 'failed'
-──────────────────────────────────────────────────
+Algorithm: oniceconnectionstatechange â†’ 'failed'
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 1. IF restartAttempted[peerId] IS false:
      restartAttempted[peerId] = true
      pc.restartIce()                    // triggers new ICE gathering
@@ -571,26 +571,26 @@ Algorithm: oniceconnectionstatechange → 'failed'
 
 ```
 Algorithm: getGridLayout(participantCount)
-───────────────────────────────────────────
-1  participant  → cols: 1, rows: 1  (centered, full-width)
-2  participants → cols: 2, rows: 1
-3–4 participants → cols: 2, rows: 2
-5–6 participants → cols: 3, rows: 2
-7–8 participants → cols: 4, rows: 2
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+1  participant  â†’ cols: 1, rows: 1  (centered, full-width)
+2  participants â†’ cols: 2, rows: 1
+3â€“4 participants â†’ cols: 2, rows: 2
+5â€“6 participants â†’ cols: 3, rows: 2
+7â€“8 participants â†’ cols: 4, rows: 2
 
 CSS: grid-template-columns: repeat({cols}, 1fr)
      grid-template-rows: repeat({rows}, 1fr)
 
 Screen share active:
-  → Sharer tile: col-span-full, large (70% height)
-  → Other tiles: horizontal strip below (overflow-x: auto)
+  â†’ Sharer tile: col-span-full, large (70% height)
+  â†’ Other tiles: horizontal strip below (overflow-x: auto)
 ```
 
 ### 6. Dominant Speaker Detection
 
 ```
 Algorithm: dominantSpeakerDetection()
-───────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Every 500ms:
   FOR EACH pc IN peerConnections:
     stats = await pc.getStats()
@@ -606,7 +606,7 @@ Every 500ms:
 
 ```
 Algorithm: addNotification(message)
-─────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 1. id = uuid()
 2. notifications.push({ id, message, createdAt: Date.now() })
 3. setTimeout(() => removeNotification(id), 4000)
@@ -618,19 +618,19 @@ Algorithm: addNotification(message)
 
 | Scenario | Detection | Client Response | Server Response |
 |---|---|---|---|
-| Camera/mic denied | `getUserMedia` rejection | Show descriptive error; allow audio-only or video-only join | — |
+| Camera/mic denied | `getUserMedia` rejection | Show descriptive error; allow audio-only or video-only join | â€” |
 | Meeting not found | Socket `meeting-not-found` or REST 404 | Navigate to `MeetingNotFound` page | Return 404 JSON |
 | Room full (>8) | Socket `room-full` event | Show "Meeting is full" toast; stay on pre-join | Emit `room-full` to socket |
-| ICE failure | `iceconnectionstate === 'failed'` | Attempt ICE restart; show error on tile if retry fails | — |
-| DB connection failure | Mongoose `connect` error | — | Log error, `process.exit(1)` |
+| ICE failure | `iceconnectionstate === 'failed'` | Attempt ICE restart; show error on tile if retry fails | â€” |
+| DB connection failure | Mongoose `connect` error | â€” | Log error, `process.exit(1)` |
 | JWT expired | 401 response from API | Redirect to login, clear token | Return 401 |
 | Invalid JWT on socket | Socket middleware rejection | Socket disconnected; show auth error | Disconnect socket |
 | Chat message too long | Client-side length check | Show character-limit error, prevent submit | Validate server-side, return 400 |
-| `getDisplayMedia` rejected | Promise rejection | Silently cancel (no error shown per Req 7.7) | — |
-| Screen share already active | `isScreenSharing` flag in store | Show notification "Screen sharing already active" | — |
+| `getDisplayMedia` rejected | Promise rejection | Silently cancel (no error shown per Req 7.7) | â€” |
+| Screen share already active | `isScreenSharing` flag in store | Show notification "Screen sharing already active" | â€” |
 | Host leaves | `disconnecting` event | Promote next participant; emit `host-changed` | Emit `host-changed` to room |
 | Participant kicked | `you-were-removed` event | Stop media, close PCs, navigate to `RemovedScreen` | Emit `user-left` to room |
-| Waiting room denied | `denied` event | Show "Your request to join was denied" message | — |
+| Waiting room denied | `denied` event | Show "Your request to join was denied" message | â€” |
 
 ---
 
@@ -658,18 +658,18 @@ Both unit/example-based tests and property-based tests are used. Unit tests cove
 
 ### Unit Test Focus Areas
 
-- `getGridLayout(n)` — all participant counts 1–8
-- `generateMeetingId()` — format validation
+- `getGridLayout(n)` â€” all participant counts 1â€“8
+- `generateMeetingId()` â€” format validation
 - Chat message validation (length, empty)
-- JWT middleware — valid, expired, missing tokens
-- `addNotification` / `removeNotification` — queue behavior
-- `ParticipantRow` rendering — host badge, mute icon, hand icon
-- `AvatarFallback` — initials extraction from display names
+- JWT middleware â€” valid, expired, missing tokens
+- `addNotification` / `removeNotification` â€” queue behavior
+- `ParticipantRow` rendering â€” host badge, mute icon, hand icon
+- `AvatarFallback` â€” initials extraction from display names
 
 ### Integration Test Focus Areas
 
-- Chat message write → read round-trip via `/api/meetings/:id/chat`
-- Meeting creation → GET metadata endpoint
-- Auth register → login → protected endpoint access
-- Socket.IO room join → `user-joined` relay to existing participants
+- Chat message write â†’ read round-trip via `/api/meetings/:id/chat`
+- Meeting creation â†’ GET metadata endpoint
+- Auth register â†’ login â†’ protected endpoint access
+- Socket.IO room join â†’ `user-joined` relay to existing participants
 

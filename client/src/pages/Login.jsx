@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Video, Mail, Lock, Loader2 } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 
@@ -7,6 +7,8 @@ const SERVER_URL = 'http://localhost:5000';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/';
   const { setAuth } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -34,7 +36,7 @@ const Login = () => {
       }
 
       setAuth(data.token, data.userId, data.email, data.displayName);
-      navigate('/');
+      navigate(redirectUrl);
     } catch {
       setError('Network error. Is the server running?');
     } finally {

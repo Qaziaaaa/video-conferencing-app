@@ -5,6 +5,7 @@ import { useWebRTC } from '../hooks/useWebRTC';
 import { useChat } from '../hooks/useChat';
 import { useScreenShare } from '../hooks/useScreenShare';
 import { useParticipants } from '../hooks/useParticipants';
+import { useNotifications } from '../hooks/useNotifications';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import useMeetingStore from '../store/useMeetingStore';
 import useUIStore from '../store/useUIStore';
@@ -35,6 +36,7 @@ const MeetingRoom = () => {
   // ── Supporting hooks ─────────────────────────────────────────────────────
   useChat(socket);
   useParticipants(socket);
+  useNotifications(socket);
   useKeyboardShortcuts(socket);
 
   const { startScreenShare, stopScreenShare } = useScreenShare(
@@ -46,23 +48,28 @@ const MeetingRoom = () => {
   // ── Mute toggle — also emits media state ─────────────────────────────────
   const handleToggleMic = useCallback(() => {
     toggleMic();
-    const state = useMeetingStore.getState();
-    socket?.emit('participant-media-state', {
-      meetingId,
-      isMuted: state.isMicOn, // value BEFORE toggle (toggleMic already flipped it)
-      isCameraOff: !state.isCamOn,
-    });
+    // Read state after toggle
+    setTimeout(() => {
+      const state = useMeetingStore.getState();
+      socket?.emit('participant-media-state', {
+        meetingId,
+        isMuted: !state.isMicOn,
+        isCameraOff: !state.isCamOn,
+      });
+    }, 0);
   }, [socket, meetingId, toggleMic]);
 
   // ── Camera toggle — also emits media state ────────────────────────────────
   const handleToggleCam = useCallback(() => {
     toggleCam();
-    const state = useMeetingStore.getState();
-    socket?.emit('participant-media-state', {
-      meetingId,
-      isMuted: !state.isMicOn,
-      isCameraOff: state.isCamOn, // value BEFORE toggle
-    });
+    setTimeout(() => {
+      const state = useMeetingStore.getState();
+      socket?.emit('participant-media-state', {
+        meetingId,
+        isMuted: !state.isMicOn,
+        isCameraOff: !state.isCamOn,
+      });
+    }, 0);
   }, [socket, meetingId, toggleCam]);
 
   // ── Raise/lower hand ──────────────────────────────────────────────────────

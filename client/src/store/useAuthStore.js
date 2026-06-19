@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // JWT stored in-memory only (not localStorage) to prevent XSS token theft
-const useAuthStore = create((set) => ({
+const useAuthStore = create((set, get) => ({
   token: null,
   userId: null,
   email: null,
@@ -13,10 +13,8 @@ const useAuthStore = create((set) => ({
   clearAuth: () =>
     set({ token: null, userId: null, email: null, displayName: null }),
 
-  isAuthenticated: () => {
-    // Computed — not reactive, call inside components via get()
-    return false; // overridden below
-  },
+  // Computed property - call get().isAuthenticated() to check auth status
+  isAuthenticated: () => !!get().token,
 }));
 
 export default useAuthStore;

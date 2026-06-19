@@ -19,11 +19,12 @@ export const getGridLayout = (count) => {
   return { cols: 4, rows: 2 };
 };
 
+// Responsive grid: always 1 col on mobile, scale up on sm+
 const colsClass = {
   1: 'grid-cols-1',
-  2: 'grid-cols-2',
-  3: 'grid-cols-3',
-  4: 'grid-cols-4',
+  2: 'grid-cols-1 sm:grid-cols-2',
+  3: 'grid-cols-1 sm:grid-cols-2',
+  4: 'grid-cols-1 sm:grid-cols-2',
 };
 
 const VideoGrid = ({ onKickParticipant }) => {
@@ -38,6 +39,7 @@ const VideoGrid = ({ onKickParticipant }) => {
     isMicOn,
     isCamOn,
     isHandRaised,
+    isBlurred,
     activeScreenShareSocketId,
     dominantSpeakerSocketId,
   } = useMeetingStore();
@@ -75,7 +77,7 @@ const VideoGrid = ({ onKickParticipant }) => {
 
         {/* Sidebar strip of other participants */}
         {otherIds.length > 0 && (
-          <div className="flex gap-2 h-28 overflow-x-auto flex-shrink-0 pb-1">
+          <div className="flex gap-2 h-24 sm:h-28 overflow-x-auto flex-shrink-0 pb-1">
             {otherIds.map((id) => {
               const p = participants[id];
               const isLocalTile = id === localSocketId;
@@ -90,6 +92,7 @@ const VideoGrid = ({ onKickParticipant }) => {
                     isMuted={isLocalTile ? !isMicOn : p?.isMuted || false}
                     isCameraOff={isLocalTile ? !isCamOn : p?.isCameraOff || false}
                     isHandRaised={isLocalTile ? isHandRaised : p?.isHandRaised || false}
+                    isBlurred={isLocalTile ? isBlurred : false}
                     isDominantSpeaker={id === dominantSpeakerSocketId}
                     isScreenSharing={false}
                     isLoading={connectionStates[id] === 'connecting'}
@@ -124,6 +127,7 @@ const VideoGrid = ({ onKickParticipant }) => {
             isMuted={isLocalTile ? !isMicOn : p?.isMuted || false}
             isCameraOff={isLocalTile ? !isCamOn : p?.isCameraOff || false}
             isHandRaised={isLocalTile ? isHandRaised : p?.isHandRaised || false}
+            isBlurred={isLocalTile ? isBlurred : false}
             isDominantSpeaker={id === dominantSpeakerSocketId}
             isScreenSharing={p?.isScreenSharing || false}
             isLoading={!isLocalTile && connectionStates[id] === 'connecting'}
@@ -143,6 +147,7 @@ const VideoGrid = ({ onKickParticipant }) => {
           isMuted={!isMicOn}
           isCameraOff={!isCamOn}
           isHandRaised={isHandRaised}
+          isBlurred={isBlurred}
           isDominantSpeaker={false}
           isScreenSharing={false}
           isLoading={false}

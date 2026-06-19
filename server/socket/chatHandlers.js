@@ -1,4 +1,5 @@
 const ChatMessage = require('../models/ChatMessage');
+const { validateChatMessage } = require('../utils/chatValidation');
 
 /**
  * Chat handlers: chat-message
@@ -9,13 +10,9 @@ const registerChatHandlers = (io, socket, rooms) => {
     if (!meetingId || !senderName || !text) return;
 
     // Validate text length
-    if (typeof text !== 'string' || text.trim().length === 0) {
-      socket.emit('error-msg', { message: 'Message cannot be empty' });
-      return;
-    }
-
-    if (text.length > 1000) {
-      socket.emit('error-msg', { message: 'Message exceeds 1000 character limit' });
+    const errorMsg = validateChatMessage(text);
+    if (errorMsg) {
+      socket.emit('error-msg', { message: errorMsg });
       return;
     }
 

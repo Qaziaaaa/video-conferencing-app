@@ -22,6 +22,7 @@ const useMeetingStore = create((set, get) => ({
   isCamOn: true,
   isScreenSharing: false,
   isHandRaised: false,
+  isBlurred: false,
 
   // Connection/error state
   connectionStatus: 'disconnected',
@@ -110,6 +111,7 @@ const useMeetingStore = create((set, get) => ({
 
   setScreenSharing: (active) => set({ isScreenSharing: active }),
   toggleHand: () => set((state) => ({ isHandRaised: !state.isHandRaised })),
+  toggleBlur: () => set((state) => ({ isBlurred: !state.isBlurred })),
 
   setActiveScreenShare: (socketId) => set({ activeScreenShareSocketId: socketId }),
   setDominantSpeaker: (socketId) => set({ dominantSpeakerSocketId: socketId }),
@@ -134,6 +136,7 @@ const useMeetingStore = create((set, get) => ({
       mediaError: null,
       activeScreenShareSocketId: null,
       dominantSpeakerSocketId: null,
+      isBlurred: false,
     }),
 }));
 

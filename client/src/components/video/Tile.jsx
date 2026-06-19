@@ -13,6 +13,7 @@ const Tile = ({
   isMuted = false,
   isCameraOff = false,
   isHandRaised = false,
+  isBlurred = false,
   isDominantSpeaker = false,
   isScreenSharing = false,
   isLoading = false,
@@ -23,6 +24,7 @@ const Tile = ({
   return (
     <div
       className={`
+        tile-enter
         relative w-full h-full rounded-2xl overflow-hidden bg-[#111118]
         border-2 transition-all duration-300
         ${isDominantSpeaker
@@ -38,7 +40,11 @@ const Tile = ({
       {!isLoading && (
         <>
           {showVideo ? (
-            <VideoPlayer stream={stream} muted={isLocal} className="w-full h-full object-cover" />
+            <VideoPlayer
+              stream={stream}
+              muted={isLocal}
+              className={`w-full h-full object-cover transition-all duration-300 ${isBlurred ? 'blur-md scale-110' : ''}`}
+            />
           ) : (
             <AvatarFallback displayName={displayName} size="lg" />
           )}

@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Users,
   PhoneOff,
+  Wand2,
 } from 'lucide-react';
 
 const ControlButton = ({
@@ -45,6 +46,7 @@ const ControlBar = ({
   isCamOn,
   isHandRaised,
   isScreenSharing,
+  isBlurred,
   isChatOpen,
   isParticipantsOpen,
   unreadChatCount,
@@ -53,6 +55,7 @@ const ControlBar = ({
   onToggleCam,
   onToggleHand,
   onToggleScreenShare,
+  onToggleBlur,
   onToggleChat,
   onToggleParticipants,
   onLeave,
@@ -95,6 +98,16 @@ const ControlBar = ({
         className={isHandRaised ? 'bg-amber-500/30 text-amber-400 hover:bg-amber-500/40' : ''}
       >
         <Hand size={20} />
+      </ControlButton>
+
+      {/* Background Blur */}
+      <ControlButton
+        onClick={onToggleBlur}
+        ariaLabel={isBlurred ? 'Disable background blur' : 'Enable background blur'}
+        active={!isBlurred}
+        className={isBlurred ? 'bg-purple-500/30 text-purple-400 hover:bg-purple-500/40' : ''}
+      >
+        <Wand2 size={20} />
       </ControlButton>
 
       {/* Divider */}

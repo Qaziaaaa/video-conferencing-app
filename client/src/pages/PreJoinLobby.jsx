@@ -108,7 +108,8 @@ const PreJoinLobby = () => {
 
     // Navigate to room (protected route requires auth)
     if (!token) {
-      navigate(`/login`);
+      // Preserve meeting context in URL so we can redirect back after login
+      navigate(`/login?redirect=/meeting/${meetingId}/room`);
       return;
     }
     navigate(`/meeting/${meetingId}/room`);

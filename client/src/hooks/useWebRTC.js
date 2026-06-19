@@ -30,31 +30,10 @@ export const useWebRTC = () => {
   // Original camera track (for restoring after screen share)
   const originalCameraTrackRef = useRef(null);
 
-  const {
-    meetingId,
-    displayName,
-    localStream,
-    setLocalStream,
-    setLocalSocketId,
-    setRemoteStream,
-    removeRemoteStream,
-    setConnectionState,
-    removeConnectionState,
-    upsertParticipant,
-    removeParticipant,
-    setParticipants,
-    setHost,
-    setConnectionStatus,
-    setMediaError,
-    setActiveScreenShare,
-    toggleMic,
-    toggleCam,
-    isMicOn,
-    isCamOn,
-    reset,
-  } = useMeetingStore.getState();
-
-  const { token } = useAuthStore.getState();
+  // Read reactively from store (not stale .getState() at hook init)
+  const meetingId = useMeetingStore((s) => s.meetingId);
+  const displayName = useMeetingStore((s) => s.displayName);
+  const token = useAuthStore((s) => s.token);
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -410,8 +389,40 @@ export const useWebRTC = () => {
       useMeetingStore.getState().setConnectionStatus('disconnected');
     });
 
+    // ── Dominant speaker detection ─────────────────────────────────────────────
+    const statsInterval = setInterval(async () => {
+      let maxAudioLevel = 0;
+      let dominantSpeakerId = null;
+
+      for (const [peerId, pc] of peerConnectionsRef.current.entries()) {
+        if (pc.iceConnectionState !== 'connected' && pc.iceConnectionState !== 'completed') continue;
+
+        try {
+          const stats = await pc.getStats();
+          stats.forEach((report) => {
+            if (report.type === 'inbound-rtp' && report.kind === 'audio') {
+              const audioLevel = report.audioLevel || 0;
+              if (audioLevel > maxAudioLevel) {
+                maxAudioLevel = audioLevel;
+                dominantSpeakerId = peerId;
+              }
+            }
+          });
+        } catch (err) {
+          // ignore
+        }
+      }
+
+      if (maxAudioLevel > 0.01 && dominantSpeakerId) {
+        useMeetingStore.getState().setDominantSpeaker(dominantSpeakerId);
+      } else if (useMeetingStore.getState().dominantSpeakerSocketId) {
+        useMeetingStore.getState().setDominantSpeaker(null);
+      }
+    }, 500);
+
     // ── Cleanup ────────────────────────────────────────────────────────────────
     const cleanup = () => {
+      clearInterval(statsInterval);
       peerConnectionsRef.current.forEach((pc) => pc.close());
       peerConnectionsRef.current.clear();
       iceBuffersRef.current.clear();

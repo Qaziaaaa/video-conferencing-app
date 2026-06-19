@@ -14,6 +14,7 @@ const Home = () => {
   const [copied, setCopied] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
+  const [waitingRoomEnabled, setWaitingRoomEnabled] = useState(false);
 
   const handleCreate = async () => {
     if (!token) {
@@ -29,7 +30,7 @@ const Home = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ waitingRoomEnabled }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -141,8 +142,19 @@ const Home = () => {
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center pt-4">
-            <button
+          <div className="flex flex-col gap-4 items-center justify-center pt-4">
+            <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer hover:text-slate-300 transition-colors">
+              <input
+                type="checkbox"
+                checked={waitingRoomEnabled}
+                onChange={(e) => setWaitingRoomEnabled(e.target.checked)}
+                className="w-4 h-4 rounded border-white/20 bg-black/20 text-blue-500 focus:ring-blue-500/50 focus:ring-offset-0"
+              />
+              Enable Waiting Room
+            </label>
+
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <button
               onClick={handleCreate}
               disabled={creating}
               className="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-white transition-all shadow-lg shadow-blue-500/20 active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
@@ -172,6 +184,7 @@ const Home = () => {
                 Join
               </button>
             </form>
+            </div>
           </div>
 
           {/* Share URL display after creation */}

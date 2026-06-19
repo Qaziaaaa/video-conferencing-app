@@ -25,9 +25,9 @@ const registerAdminHandlers = (io, socket, rooms) => {
     // Notify the kicked participant
     io.to(targetSocketId).emit('you-were-removed', {});
 
-    // Notify remaining participants (the kicked user's disconnect will trigger user-left,
-    // but we also emit it proactively so the UI updates immediately)
-    socket.to(meetingId).emit('user-left', {
+    // Notify ALL remaining participants INCLUDING the host
+    // io.to() includes everyone in the room, unlike socket.to() which excludes sender
+    io.to(meetingId).emit('user-left', {
       socketId: targetSocketId,
       displayName: targetMeta.displayName,
     });
