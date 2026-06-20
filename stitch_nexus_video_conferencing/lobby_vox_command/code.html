@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VOX - Pre-join Lobby</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Geist Font -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#006b5f",
+                      "on-tertiary": "#68000a",
+                      "tertiary-container": "#ffa7a0",
+                      "on-tertiary-container": "#9e0016",
+                      "on-secondary-fixed": "#151d1b",
+                      "secondary": "#c0c8c5",
+                      "tertiary": "#ffceca",
+                      "primary": "#57f1db",
+                      "inverse-surface": "#dae2fd",
+                      "on-primary-container": "#00574d",
+                      "primary-fixed-dim": "#3cddc7",
+                      "tertiary-fixed-dim": "#ffb3ad",
+                      "secondary-container": "#434b49",
+                      "on-tertiary-fixed": "#410004",
+                      "surface-tint": "#3cddc7",
+                      "on-primary": "#003731",
+                      "surface-variant": "#2d3449",
+                      "secondary-fixed": "#dce4e1",
+                      "outline": "#859490",
+                      "outline-variant": "#3c4a46",
+                      "error-container": "#93000a",
+                      "surface-container-lowest": "#060e20",
+                      "surface-dim": "#0b1326",
+                      "on-secondary": "#2a3230",
+                      "primary-container": "#2dd4bf",
+                      "secondary-fixed-dim": "#c0c8c5",
+                      "on-secondary-fixed-variant": "#404846",
+                      "surface": "#0b1326",
+                      "surface-container": "#171f33",
+                      "on-tertiary-fixed-variant": "#930013",
+                      "on-background": "#dae2fd",
+                      "surface-container-highest": "#2d3449",
+                      "surface-bright": "#31394d",
+                      "on-surface": "#dae2fd",
+                      "error": "#ffb4ab",
+                      "on-primary-fixed": "#00201c",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary-container": "#b2bab7",
+                      "primary-fixed": "#62fae3",
+                      "surface-container-high": "#222a3d",
+                      "on-primary-fixed-variant": "#005047",
+                      "tertiary-fixed": "#ffdad7",
+                      "surface-container-low": "#131b2e",
+                      "on-error": "#690005",
+                      "on-surface-variant": "#bacac5",
+                      "background": "#0b1326",
+                      "inverse-on-surface": "#283044"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "unit": "8px",
+                      "margin-mobile": "16px",
+                      "md": "16px",
+                      "sm": "8px",
+                      "gutter": "16px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "label-md": ["Geist"],
+                      "label-sm": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-sm": ["Geist"],
+                      "body-md": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "headline-xl": ["Geist"]
+              },
+              "fontSize": {
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: linear-gradient(145deg, rgba(34, 42, 61, 0.4) 0%, rgba(19, 27, 46, 0.6) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .mic-active { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md text-body-md selection:bg-primary/30 selection:text-primary">
+<!-- TopAppBar -->
+<header class="bg-surface flex justify-between items-center w-full px-margin-desktop h-16 border-b border-outline-variant docked full-width top-0 z-50">
+<div class="flex items-center gap-6">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tighter">VOX</div>
+<div class="hidden md:flex items-center gap-4 border-l border-outline-variant pl-6">
+<span class="font-label-md text-label-md text-primary font-bold">Marketing Strategy Sync</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined" style="font-size: 20px;">help</span>
+</button>
+<button class="font-label-md text-label-md text-on-error bg-error-container hover:bg-error px-4 py-2 rounded-md transition-colors border border-error/20">
+                Leave
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter h-[calc(100vh-64px)] overflow-hidden">
+<!-- Left Column: Camera Preview Area (High-Fidelity Canvas) -->
+<div class="md:col-span-8 lg:col-span-8 flex flex-col relative rounded-[12px] border border-surface-bright bg-surface-container-lowest overflow-hidden shadow-2xl h-full min-h-[400px]">
+<!-- Video Feed Placeholder -->
+<div class="absolute inset-0 w-full h-full bg-surface-container-low">
+<img class="w-full h-full object-cover opacity-90 transition-opacity duration-500 hover:opacity-100" data-alt="A high-quality, professional simulated webcam feed of a modern, well-lit home office. The space features sleek, dark slate walls with subtle, geometric soundproofing panels. A minimalist desk with a soft, warm desk lamp sits in the background. The lighting is cinematic, casting a soft glow that creates a focused, high-end corporate atmosphere. Deep blacks, muted teals, and soft whites dominate the palette, perfectly matching a premium command-center aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiF_tjF9JhLSYdSTTi8nJgdndyDNI7ogLKXEtpd2TKnwSJlohZ8aVmFwyJMCSA-ZGD536yftaJ2SVb-6tAytlwyjXswdruPvbwmDnmdCTLkID4xAvQLyt9cJ2G1oSRW-C3FxB-Kaf5lpvHaKik4lAufxAoGo8nvjg_n1EAiYTbbyTFHGh52T6qgeEzJJDEz06gK3MNpr4KK5q1HLtMTQVlW7kSlXMeJuvakbn4ze4oH3dA8PY6QOTsARwnBDb1_Q6xWy2vt1xhAqg"/>
+<!-- Inner Shadow Overlay for Depth -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent pointer-events-none"></div>
+</div>
+<!-- Floating Top Indicators -->
+<div class="absolute top-4 left-4 flex items-center gap-2">
+<div class="glass-panel border border-outline-variant/50 rounded-full px-3 py-1.5 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(87,241,219,0.6)]"></div>
+<span class="font-label-sm text-label-sm text-on-surface">Preview Active</span>
+</div>
+</div>
+<!-- Floating Control Bar (Adapted from BottomNavBar shared logic) -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+<div class="bg-surface-container-highest/80 backdrop-blur-md rounded-full mx-auto w-max px-4 py-2 border border-outline-variant shadow-xl flex items-center gap-2">
+<!-- Mic Toggle (Active/Unmuted) -->
+<button class="bg-surface-variant hover:bg-surface-bright text-on-surface rounded-full p-3 transition-transform hover:scale-110 duration-200 flex flex-col items-center gap-1 group relative">
+<span class="material-symbols-outlined mic-active" style="font-size: 22px;">mic</span>
+<div class="absolute -top-8 bg-surface-container-high border border-outline-variant text-on-surface font-label-sm text-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Mute Mic</div>
+</button>
+<!-- Cam Toggle (Active) -->
+<button class="bg-surface-variant hover:bg-surface-bright text-on-surface rounded-full p-3 transition-transform hover:scale-110 duration-200 flex flex-col items-center gap-1 group relative">
+<span class="material-symbols-outlined mic-active" style="font-size: 22px;">videocam</span>
+<div class="absolute -top-8 bg-surface-container-high border border-outline-variant text-on-surface font-label-sm text-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Stop Video</div>
+</button>
+<div class="w-[1px] h-8 bg-outline-variant mx-2"></div>
+<!-- Effects/Blur -->
+<button class="text-on-surface hover:bg-surface-variant rounded-full p-3 transition-transform hover:scale-110 duration-200 flex flex-col items-center gap-1 group relative">
+<span class="material-symbols-outlined" style="font-size: 22px;">blur_on</span>
+<div class="absolute -top-8 bg-surface-container-high border border-outline-variant text-on-surface font-label-sm text-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Background Blur</div>
+</button>
+<!-- Settings -->
+<button class="text-on-surface hover:bg-surface-variant rounded-full p-3 transition-transform hover:scale-110 duration-200 flex flex-col items-center gap-1 group relative">
+<span class="material-symbols-outlined" style="font-size: 22px;">tune</span>
+<div class="absolute -top-8 bg-surface-container-high border border-outline-variant text-on-surface font-label-sm text-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">A/V Settings</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Join Panel (High-Density Fintech Layout) -->
+<div class="md:col-span-4 lg:col-span-4 flex flex-col justify-center h-full max-w-md mx-auto w-full px-4 md:px-8 py-8 lg:py-12 relative">
+<div class="mb-10">
+<h1 class="font-headline-lg text-headline-lg md:font-headline-xl md:text-headline-xl text-primary tracking-tight mb-3">Ready to join?</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" style="font-size: 18px;">group</span>
+                    2 participants in waiting room
+                </p>
+</div>
+<!-- Session Details Card -->
+<div class="bg-surface-container-low border border-surface-bright rounded-lg p-5 mb-8 shadow-sm">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Session ID</div>
+<div class="font-body-lg text-body-lg text-on-surface font-mono bg-surface-container p-3 rounded border border-outline-variant/30 flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors">
+                    VOX-882-91A-X9
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" style="font-size: 18px;">content_copy</span>
+</div>
+</div>
+<!-- Input Form -->
+<div class="flex flex-col gap-6 mb-10 w-full">
+<div class="relative group">
+<label class="absolute -top-2.5 left-3 bg-surface px-1 font-label-sm text-label-sm text-primary transition-all z-10">Display Name</label>
+<input class="w-full bg-surface border border-surface-bright rounded-md px-4 py-4 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all shadow-inner placeholder-on-surface-variant/50" type="text" value="Alex Chen (Engineering)"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary">check_circle</span>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md px-6 py-4 rounded-md hover:bg-primary-fixed hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-[0_4px_14px_0_rgba(87,241,219,0.15)] hover:shadow-[0_6px_20px_rgba(87,241,219,0.23)] flex items-center justify-center gap-3">
+                Enter Meeting
+                <span class="material-symbols-outlined" style="font-size: 20px;">login</span>
+</button>
+<div class="mt-6 text-center">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-outline-variant underline-offset-4" href="#">Test Speaker &amp; Microphone</a>
+</div>
+</div>
+</main>
+</body></html>

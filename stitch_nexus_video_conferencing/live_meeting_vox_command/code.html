@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Meeting Room</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#006b5f",
+                        "on-tertiary": "#68000a",
+                        "tertiary-container": "#ffa7a0",
+                        "on-tertiary-container": "#9e0016",
+                        "on-secondary-fixed": "#151d1b",
+                        "secondary": "#c0c8c5",
+                        "tertiary": "#ffceca",
+                        "primary": "#57f1db",
+                        "inverse-surface": "#dae2fd",
+                        "on-primary-container": "#00574d",
+                        "primary-fixed-dim": "#3cddc7",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "secondary-container": "#434b49",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-tint": "#3cddc7",
+                        "on-primary": "#003731",
+                        "surface-variant": "#2d3449",
+                        "secondary-fixed": "#dce4e1",
+                        "outline": "#859490",
+                        "outline-variant": "#3c4a46",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#060e20",
+                        "surface-dim": "#0b1326",
+                        "on-secondary": "#2a3230",
+                        "primary-container": "#2dd4bf",
+                        "secondary-fixed-dim": "#c0c8c5",
+                        "on-secondary-fixed-variant": "#404846",
+                        "surface": "#0b1326",
+                        "surface-container": "#171f33",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-background": "#dae2fd",
+                        "surface-container-highest": "#2d3449",
+                        "surface-bright": "#31394d",
+                        "on-surface": "#dae2fd",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#00201c",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#b2bab7",
+                        "primary-fixed": "#62fae3",
+                        "surface-container-high": "#222a3d",
+                        "on-primary-fixed-variant": "#005047",
+                        "tertiary-fixed": "#ffdad7",
+                        "surface-container-low": "#131b2e",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#bacac5",
+                        "background": "#0b1326",
+                        "inverse-on-surface": "#283044"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "32px",
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-xl": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.04em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen overflow-hidden flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface text-primary dark:text-primary docked full-width top-0 border-b border-outline-variant flat no shadows flex justify-between items-center w-full px-margin-desktop h-16 shrink-0 z-10">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tighter">VOX</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="font-body-md text-body-md text-on-surface-variant">Marketing Strategy Sync</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-bold">00:42:15</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 mr-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+<button class="bg-error text-on-error px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-colors active:scale-95">
+                Leave
+            </button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Main Stage -->
+<main class="flex-1 p-xl relative bg-surface-container-lowest overflow-hidden flex flex-col justify-center">
+<!-- Video Grid -->
+<div class="grid grid-cols-2 grid-rows-2 gap-gutter w-full max-w-7xl mx-auto h-full max-h-[819px] aspect-video">
+<!-- Tile 1 -->
+<div class="relative rounded-xl border border-surface-bright overflow-hidden bg-surface-dim">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="Professional headshot of a female executive in a modern office, cinematic lighting, corporate setting, sharp focus, 8k resolution, minimalist dark background, high contrast, professional attire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDo1Mqn3471gJ-94ToS0EdE04DWW0I70sefYCjElmeFJvmsAU9QZTJZDl7t4RUixoImdTCv93VNRWyR39b4Pvtgk9pFKe1ebANhYX_TbWI3iXtR3qA2fr2ygJ29yd_OC9FGkIcCnEQ5XdQccfuQmHam5Az9pGevY20MPxrKFuSk6NWa3qKuY2SFnU54oTdA9j1-Qm1B2KtTuCu9aFoOEfyje6VJQFl7K_E5v-x9P9VGmu7d62YmDdSgUYMX7kAwgQOquKSBU9nV00"/>
+<div class="absolute bottom-4 left-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-surface-bright">
+<span class="font-label-md text-label-md text-white">Sarah Jenkins</span>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-high/80 backdrop-blur-md p-1.5 rounded-full border border-surface-bright">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="mic" style="font-variation-settings: 'FILL' 1;">mic</span>
+</div>
+</div>
+<!-- Tile 2 -->
+<div class="relative rounded-xl border border-surface-bright overflow-hidden bg-surface-dim">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="Professional headshot of a male technical director in a dimly lit studio, blue rim lighting, dark futuristic aesthetic, sharp focus, looking directly at camera, serious expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPr3yztdFW1NUu2sUXDE_IDGq81sVhOERXzoR49nykwiP2zaNYbGOsKERwd7gsdU5nXpkqG0yAn-duG7wJMadz1qGsHy9-nNd_yeA0BsaS3x8p_3zRKjDt5fKV26hDFaJ-VR-jPQUhwlaBodZhQ3YqJyd-ep63bLMuO15Q0pCH0WNz1sFQoDHqVEdSmVseRegSv5m6Icl-9x9Pi-3HCXqx63VGxhVu--UUYU4JXj3ahThYEQmL4VQHatUqpVsGz3LyvRj7_21CfXQ"/>
+<div class="absolute bottom-4 left-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-surface-bright">
+<span class="font-label-md text-label-md text-white">David Chen</span>
+</div>
+<div class="absolute top-4 right-4 bg-error-container/80 backdrop-blur-md p-1.5 rounded-full border border-error">
+<span class="material-symbols-outlined text-sm text-on-error-container" data-icon="mic_off" style="font-variation-settings: 'FILL' 1;">mic_off</span>
+</div>
+</div>
+<!-- Tile 3 -->
+<div class="relative rounded-xl border border-surface-bright overflow-hidden bg-surface-dim">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="Professional headshot of a young female designer in a well-lit minimalist space, soft natural light, clean white background, contemporary style, sharp focus, 8k resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcaus_ZusMTMnfYfXQUuCh9HBDjAWBv9-WXj_DacrPh4NzIfJsXbRHE62Uweu-EVH0qolD5WOIrEVS5So-D5HyXECD5_0rBqRCEhcx6iPKH_TRcGkYM9zSGriTh5Kg6GYWoCm9l68lAg0PV5sGBzSacf02EIM_QOgfrcKNxBDrlqnxlEPPf0R1CzVLVdDtumDCe3kElghYb_3klRkzcprkF0TQOQ_cqZZKb0jv6NR-i_-FXu5Py_jxfwXWcl6ghFX5cE4ISAMOzK0"/>
+<div class="absolute bottom-4 left-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-surface-bright">
+<span class="font-label-md text-label-md text-white">Elena Rodriguez</span>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-high/80 backdrop-blur-md p-1.5 rounded-full border border-surface-bright">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="mic" style="font-variation-settings: 'FILL' 1;">mic</span>
+</div>
+</div>
+<!-- Tile 4 (You) -->
+<div class="relative rounded-xl border border-surface-bright overflow-hidden bg-surface-dim">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="Professional headshot of a male executive in a corporate boardroom, dark mahogany and glass background, cinematic lighting, sharp focus, confident expression, high-end corporate setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwfpKc4c1zG6wxcRzR66lKAZCU7psWNalcRBDfEfqhLtMCbSNiynD8gTSR1sNN8jgkpV5-rQS-RRy1dKvETCrFXVR7d6G_zZDMVUcaW_cIk4fX7BNEcW0FOhmx28H-p-q6LAngokrUxsVPRezdiGKMPM5PIbXGboKD0JeJ5WSH0Z7_PT8_aOQfBL7V7HU8qBMXchIGaL75OJSRTS-RjeZn36vBbw8DwdtHLq57y6o097RHk6XvM_PBGX5jUrOTz_pEg6CxapY-97A"/>
+<div class="absolute bottom-4 left-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-surface-bright">
+<span class="font-label-md text-label-md text-white">James Wilson (You)</span>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-high/80 backdrop-blur-md p-1.5 rounded-full border border-surface-bright">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="mic" style="font-variation-settings: 'FILL' 1;">mic</span>
+</div>
+</div>
+</div>
+<!-- BottomNavBar -->
+<div class="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-safe">
+<div class="bg-surface-container-highest/80 backdrop-blur-md rounded-full mx-auto mb-8 w-max px-6 py-2 border border-outline-variant shadow-xl flex items-center gap-4">
+<button class="flex flex-col items-center gap-1 text-on-surface hover:bg-surface-variant rounded-full p-2 hover:scale-110 transition-transform active:scale-90 duration-100">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+<span class="font-label-sm text-label-sm">Mic</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface hover:bg-surface-variant rounded-full p-2 hover:scale-110 transition-transform active:scale-90 duration-100">
+<span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+<span class="font-label-sm text-label-sm">Camera</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface hover:bg-surface-variant rounded-full p-2 hover:scale-110 transition-transform active:scale-90 duration-100">
+<span class="material-symbols-outlined" data-icon="present_to_all">present_to_all</span>
+<span class="font-label-sm text-label-sm">Share</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface hover:bg-surface-variant rounded-full p-2 hover:scale-110 transition-transform active:scale-90 duration-100">
+<span class="material-symbols-outlined" data-icon="front_hand">front_hand</span>
+<span class="font-label-sm text-label-sm">Hand</span>
+</button>
+<div class="w-px h-8 bg-outline-variant mx-2"></div>
+<button class="flex flex-col items-center gap-1 bg-primary text-on-primary rounded-full p-2 hover:scale-110 transition-transform active:scale-90 duration-100 relative">
+<span class="material-symbols-outlined" data-icon="forum">forum</span>
+<span class="font-label-sm text-label-sm">Chat</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</div>
+</main>
+<!-- SideNavBar (Slide-out Chat/Participants) -->
+<aside class="bg-surface-container-low dark:bg-surface-container-low text-primary dark:text-primary docked fixed right-0 top-0 h-full w-[320px] border-l border-outline-variant flat no shadows flex flex-col h-full border-l border-outline-variant shrink-0 z-20">
+<!-- Header -->
+<div class="p-4 border-b border-outline-variant flex items-center justify-between shrink-0">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Meeting Details</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Room 402</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Small circular avatar of the logged in user, abstract geometric pattern, professional minimalist profile picture, dark corporate theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeF_Zzw8onMt8yoct7WU3CJ6lSvIMmEJTh5tj9RLfI8A1DnYMRHpvsEn80h_bulqrbUvN2Zmb7S_15Xl4yOgpIEtfzQYAFoDSLRh7OB5zHLgBI1ofzB-P9aoyzwFKoC_enpkTPYAm1ugRcKKf3lX_0-2T8oeOfB93O2VNsJeBlC1dDVhs13wPGFVhyD0lhC7WN5scHM4MPyLO7K3h0yepFPBn4TujoEVxEQJ1B_n0cNXNLmkdbNceFp4GCJZEiHH31Bw1e4b6Jmgc"/>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant shrink-0 px-4 pt-4">
+<button class="flex-1 flex items-center justify-center gap-2 pb-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-transform duration-300 ease-in-out">
+<span class="material-symbols-outlined text-sm" data-icon="group">group</span>
+                    Participants
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 pb-3 font-label-md text-label-md text-primary border-b-2 border-primary transition-transform duration-300 ease-in-out relative">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+                    Chat
+                    <span class="absolute top-1 right-8 w-1.5 h-1.5 bg-error rounded-full"></span>
+</button>
+</div>
+<!-- Chat Content -->
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-6 font-body-sm text-body-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline justify-between">
+<span class="font-label-md text-label-md text-on-surface">Sarah Jenkins</span>
+<span class="text-[10px] text-on-surface-variant">10:42 AM</span>
+</div>
+<div class="bg-surface-variant rounded-lg rounded-tl-none p-3 text-on-surface">
+                        Can everyone see the updated Q3 projections deck? I've uploaded it to the shared drive.
+                    </div>
+</div>
+<div class="flex flex-col gap-1 items-end">
+<div class="flex items-baseline justify-between w-full flex-row-reverse">
+<span class="font-label-md text-label-md text-primary">You</span>
+<span class="text-[10px] text-on-surface-variant">10:44 AM</span>
+</div>
+<div class="bg-primary-container text-on-primary-container rounded-lg rounded-tr-none p-3 max-w-[85%] text-right">
+                        Yes, got it. Looking at the revised acquisition costs now.
+                    </div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline justify-between">
+<span class="font-label-md text-label-md text-on-surface">David Chen</span>
+<span class="text-[10px] text-on-surface-variant">10:45 AM</span>
+</div>
+<div class="bg-surface-variant rounded-lg rounded-tl-none p-3 text-on-surface">
+                        The numbers on slide 14 seem a bit optimistic given the current server load metrics. We might need to adjust the technical budget.
+                    </div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline justify-between">
+<span class="font-label-md text-label-md text-on-surface">Elena Rodriguez</span>
+<span class="text-[10px] text-on-surface-variant">10:46 AM</span>
+</div>
+<div class="bg-surface-variant rounded-lg rounded-tl-none p-3 text-on-surface">
+                        I'll update the visualizations to reflect the new technical constraints. Give me 10 mins.
+                    </div>
+</div>
+</div>
+<!-- Chat Input -->
+<div class="p-4 border-t border-outline-variant shrink-0 bg-surface-container-low">
+<div class="relative flex items-center">
+<input class="w-full bg-surface-dim border border-surface-bright rounded-lg py-2.5 pl-4 pr-10 text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant transition-colors" placeholder="Type a message..." type="text"/>
+<button class="absolute right-2 p-1.5 text-primary hover:bg-surface-variant rounded-md transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

@@ -3,7 +3,7 @@ import useChatStore from '../store/useChatStore';
 import useMeetingStore from '../store/useMeetingStore';
 import useAuthStore from '../store/useAuthStore';
 
-const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 /**
  * useChat — handles incoming chat-message socket events and exposes sendMessage().

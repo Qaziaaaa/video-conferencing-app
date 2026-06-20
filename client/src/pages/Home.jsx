@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Video, Plus, LogIn, LogOut, Copy, Check, Loader2, Monitor, MessageSquare, Hand, Sparkles } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 
-const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const features = [
   { icon: Monitor, label: 'HD video', desc: 'Crystal clear 720p' },

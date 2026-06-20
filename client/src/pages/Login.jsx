@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Video, Mail, Lock, Loader2 } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 
-const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Login = () => {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { Loader2, XCircle } from 'lucide-react';
 import { io } from 'socket.io-client';
 import useMeetingStore from '../store/useMeetingStore';
 
-const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const WaitingRoom = () => {
   const { meetingId } = useParams();
