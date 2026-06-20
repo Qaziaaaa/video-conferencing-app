@@ -6,21 +6,20 @@ const MeetingNotFound = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="w-20 h-20 bg-[#111118] border border-white/5 rounded-2xl flex items-center justify-center mx-auto">
-          <VideoOff className="w-10 h-10 text-slate-600" />
+    <div className="min-h-screen bg-base flex items-center justify-center p-6">
+      <div className="text-center space-y-6 max-w-sm">
+        <div className="w-16 h-16 bg-surface-2 border border-border rounded-2xl flex items-center justify-center mx-auto">
+          <VideoOff className="w-8 h-8 text-text-4" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Meeting not found</h1>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            The meeting you're looking for doesn't exist or may have ended.
-            Double-check the link and try again.
+          <h1 className="text-xl font-bold text-white tracking-tight mb-1">Meeting not found</h1>
+          <p className="text-text-3 text-sm leading-relaxed">
+            This meeting doesn't exist or may have ended.
           </p>
         </div>
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold text-white transition-all focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover rounded-xl font-medium text-white transition-all duration-200 text-sm shadow-lg shadow-accent-glow"
         >
           <Home className="w-4 h-4" />
           Go home

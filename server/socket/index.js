@@ -16,8 +16,9 @@ const rooms = new Map();
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: '*',
+      origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
       methods: ['GET', 'POST'],
+      credentials: true,
     },
   });
 

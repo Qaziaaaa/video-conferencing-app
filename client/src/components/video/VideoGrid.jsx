@@ -2,15 +2,6 @@ import React from 'react';
 import Tile from './Tile';
 import useMeetingStore from '../../store/useMeetingStore';
 
-/**
- * Returns CSS grid column count based on participant count.
- * Layout algorithm from design doc:
- *   1  → 1 col
- *   2  → 2 cols
- *   3–4 → 2 cols
- *   5–6 → 3 cols
- *   7–8 → 4 cols
- */
 export const getGridLayout = (count) => {
   if (count <= 1) return { cols: 1, rows: 1 };
   if (count === 2) return { cols: 2, rows: 1 };
@@ -19,19 +10,22 @@ export const getGridLayout = (count) => {
   return { cols: 4, rows: 2 };
 };
 
-// Responsive grid: always 1 col on mobile, scale up on sm+
 const colsClass = {
   1: 'grid-cols-1',
-  2: 'grid-cols-1 sm:grid-cols-2',
-  3: 'grid-cols-1 sm:grid-cols-2',
-  4: 'grid-cols-1 sm:grid-cols-2',
+  2: 'grid-cols-2',
+  3: 'grid-cols-2',
+  4: 'grid-cols-2',
 };
+
+const sidebarParticipants = (list, excludeId) =>
+  list.filter((id) => id !== excludeId);
 
 const VideoGrid = ({ onKickParticipant }) => {
   const {
     localSocketId,
     displayName,
     localStream,
+    screenShareStream,
     remoteStreams,
     participants,
     connectionStates,
@@ -42,29 +36,26 @@ const VideoGrid = ({ onKickParticipant }) => {
     isBlurred,
     activeScreenShareSocketId,
     dominantSpeakerSocketId,
+    screenShareVersion,
   } = useMeetingStore();
 
   const allParticipantIds = Object.keys(participants);
   const totalCount = allParticipantIds.length || 1;
 
-  // Screen share layout: presenter tile large, others in sidebar strip
   if (activeScreenShareSocketId) {
     const sharerParticipant = participants[activeScreenShareSocketId];
-    const otherIds = allParticipantIds.filter((id) => id !== activeScreenShareSocketId);
+    const isLocalSharer = activeScreenShareSocketId === localSocketId;
+
+    const sidebarIds = sidebarParticipants(allParticipantIds, activeScreenShareSocketId);
 
     return (
-      <div className="flex flex-col h-full gap-2">
-        {/* Large presenter tile */}
-        <div className="flex-1 min-h-0">
+      <div className="flex h-full gap-3">
+        <div className="flex-1 relative min-w-0">
           <Tile
             participantId={activeScreenShareSocketId}
             displayName={sharerParticipant?.displayName || 'Unknown'}
-            stream={
-              activeScreenShareSocketId === localSocketId
-                ? localStream
-                : remoteStreams[activeScreenShareSocketId]
-            }
-            isLocal={activeScreenShareSocketId === localSocketId}
+            stream={isLocalSharer ? screenShareStream : remoteStreams[activeScreenShareSocketId]}
+            isLocal={isLocalSharer}
             isHost={sharerParticipant?.isHost || false}
             isMuted={sharerParticipant?.isMuted || false}
             isCameraOff={false}
@@ -72,17 +63,37 @@ const VideoGrid = ({ onKickParticipant }) => {
             isDominantSpeaker={false}
             isScreenSharing={true}
             isLoading={false}
+            version={screenShareVersion}
           />
+
+          {isLocalSharer && (
+            <div className="absolute bottom-4 right-4 w-44 h-28 rounded-xl overflow-hidden border-2 border-white/10 shadow-2xl bg-surface z-10 animate-[pipIn_0.25s_ease-out]">
+              <Tile
+                participantId={localSocketId}
+                displayName={displayName}
+                stream={localStream}
+                isLocal={true}
+                isHost={isHost}
+                isMuted={!isMicOn}
+                isCameraOff={!isCamOn}
+                isHandRaised={isHandRaised}
+                isBlurred={isBlurred}
+                isDominantSpeaker={false}
+                isScreenSharing={false}
+                isLoading={false}
+                version={screenShareVersion}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Sidebar strip of other participants */}
-        {otherIds.length > 0 && (
-          <div className="flex gap-2 h-24 sm:h-28 overflow-x-auto flex-shrink-0 pb-1">
-            {otherIds.map((id) => {
+        {sidebarIds.length > 0 && (
+          <div className="flex flex-col gap-2 w-52 flex-shrink-0 overflow-y-auto custom-scrollbar pr-0.5">
+            {sidebarIds.map((id) => {
               const p = participants[id];
               const isLocalTile = id === localSocketId;
               return (
-                <div key={id} className="flex-shrink-0 w-44 h-full">
+                <div key={id} className="flex-shrink-0 h-28">
                   <Tile
                     participantId={id}
                     displayName={isLocalTile ? displayName : p?.displayName || 'Unknown'}
@@ -95,8 +106,9 @@ const VideoGrid = ({ onKickParticipant }) => {
                     isBlurred={isLocalTile ? isBlurred : false}
                     isDominantSpeaker={id === dominantSpeakerSocketId}
                     isScreenSharing={false}
-                    isLoading={connectionStates[id] === 'connecting'}
+                    isLoading={!isLocalTile && connectionStates[id] === 'connecting'}
                     onKick={isHost && !isLocalTile ? () => onKickParticipant?.(id) : undefined}
+                    version={screenShareVersion}
                   />
                 </div>
               );
@@ -107,15 +119,13 @@ const VideoGrid = ({ onKickParticipant }) => {
     );
   }
 
-  // Normal grid layout
   const { cols } = getGridLayout(totalCount);
 
   return (
-    <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-2 h-full auto-rows-fr`}>
+    <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr`}>
       {allParticipantIds.map((id) => {
         const p = participants[id];
         const isLocalTile = id === localSocketId;
-
         return (
           <Tile
             key={id}
@@ -132,11 +142,11 @@ const VideoGrid = ({ onKickParticipant }) => {
             isScreenSharing={p?.isScreenSharing || false}
             isLoading={!isLocalTile && connectionStates[id] === 'connecting'}
             onKick={isHost && !isLocalTile ? () => onKickParticipant?.(id) : undefined}
+            version={screenShareVersion}
           />
         );
       })}
 
-      {/* Show local tile if not yet in participants map */}
       {!allParticipantIds.includes(localSocketId) && localSocketId && (
         <Tile
           participantId={localSocketId}
@@ -151,6 +161,7 @@ const VideoGrid = ({ onKickParticipant }) => {
           isDominantSpeaker={false}
           isScreenSharing={false}
           isLoading={false}
+          version={screenShareVersion}
         />
       )}
     </div>

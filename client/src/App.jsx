@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import useAuthStore from './store/useAuthStore';
 
 import Home from './pages/Home';
@@ -11,16 +11,19 @@ import WaitingRoom from './pages/WaitingRoom';
 import RemovedScreen from './pages/RemovedScreen';
 import MeetingNotFound from './pages/MeetingNotFound';
 
-// Guard: redirect to login if not authenticated
 const ProtectedRoute = ({ children }) => {
   const token = useAuthStore((s) => s.token);
-  if (!token) return <Navigate to="/login" replace />;
+  const location = useLocation();
+  if (!token) {
+    const redirect = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/login?redirect=${redirect}`} replace />;
+  }
   return children;
 };
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-base text-white font-sans selection:bg-accent/30">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

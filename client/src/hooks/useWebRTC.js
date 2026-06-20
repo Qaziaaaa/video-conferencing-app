@@ -29,6 +29,8 @@ export const useWebRTC = () => {
   const localStreamRef = useRef(null);
   // Original camera track (for restoring after screen share)
   const originalCameraTrackRef = useRef(null);
+  // Track whether we've already joined the room to avoid duplicate joins
+  const hasJoinedRef = useRef(false);
 
   // Read reactively from store (not stale .getState() at hook init)
   const meetingId = useMeetingStore((s) => s.meetingId);
@@ -193,11 +195,18 @@ export const useWebRTC = () => {
     // ── Socket event handlers ──────────────────────────────────────────────────
 
     socket.on('connect', async () => {
-      console.log(`[WebRTC] Socket connected: ${socket.id}`);
+      console.log(`[WebRTC] Socket ${hasJoinedRef.current ? 're' : ''}connected: ${socket.id}`);
       useMeetingStore.getState().setLocalSocketId(socket.id);
 
-      await initMedia();
+      if (!hasJoinedRef.current) {
+        // First connection — capture media and join
+        await initMedia();
+      } else {
+        // Reconnection — keep existing media, clear stale peer connections
+        useMeetingStore.getState().setConnectionStatus('connecting');
+      }
 
+      hasJoinedRef.current = true;
       socket.emit('join-room', { meetingId, displayName });
     });
 
@@ -372,7 +381,7 @@ export const useWebRTC = () => {
     });
 
     socket.on('room-full', () => {
-      useMeetingStore.getState().setMediaError('This meeting is full (max 8 participants).');
+      useMeetingStore.getState().setMediaError('This meeting is full (max 4 participants during beta).');
     });
 
     socket.on('meeting-not-found', () => {
@@ -387,6 +396,21 @@ export const useWebRTC = () => {
     socket.on('disconnect', () => {
       console.log('[WebRTC] Socket disconnected');
       useMeetingStore.getState().setConnectionStatus('disconnected');
+      // Close peer connections but keep local stream for reconnection
+      peerConnectionsRef.current.forEach((pc) => pc.close());
+      peerConnectionsRef.current.clear();
+      iceBuffersRef.current.clear();
+      iceRestartAttemptedRef.current.clear();
+      // Remove remote streams from store
+      const { remoteStreams } = useMeetingStore.getState();
+      Object.keys(remoteStreams).forEach((sid) => {
+        useMeetingStore.getState().removeRemoteStream(sid);
+      });
+      // Clear connection states
+      const { connectionStates } = useMeetingStore.getState();
+      Object.keys(connectionStates).forEach((sid) => {
+        useMeetingStore.getState().removeConnectionState(sid);
+      });
     });
 
     // ── Dominant speaker detection ─────────────────────────────────────────────

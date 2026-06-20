@@ -4,14 +4,12 @@ import { PhoneOff, X } from 'lucide-react';
 const ConfirmDialog = ({ isOpen, onConfirm, onCancel }) => {
   const confirmBtnRef = useRef(null);
 
-  // Focus the confirm button when dialog opens (accessibility)
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => confirmBtnRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
-  // Trap focus within dialog
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       onCancel();
@@ -28,48 +26,42 @@ const ConfirmDialog = ({ isOpen, onConfirm, onCancel }) => {
       aria-labelledby="confirm-dialog-title"
       onKeyDown={handleKeyDown}
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onCancel}
       />
 
-      {/* Dialog */}
-      <div className="relative bg-[#111118] border border-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-sm">
-        {/* Close button */}
+      <div className="relative bg-surface border border-border rounded-2xl shadow-2xl p-6 w-full max-w-sm animate-[scaleIn_0.15s_ease-out]">
         <button
           onClick={onCancel}
           aria-label="Cancel"
-          className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/8 text-text-3 hover:text-white transition-colors duration-200"
         >
-          <X size={16} />
+          <X size={15} />
         </button>
 
-        {/* Icon */}
-        <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4">
-          <PhoneOff size={22} className="text-red-400" />
+        <div className="w-12 h-12 bg-danger-soft rounded-xl flex items-center justify-center mb-4">
+          <PhoneOff size={20} className="text-danger" />
         </div>
 
-        {/* Content */}
-        <h2 id="confirm-dialog-title" className="text-lg font-bold text-white mb-2">
+        <h2 id="confirm-dialog-title" className="text-base font-semibold text-white mb-1">
           Leave meeting?
         </h2>
-        <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-          You'll be disconnected from the call. Others will remain in the meeting.
+        <p className="text-sm text-text-3 mb-6 leading-relaxed">
+          Others will remain in the meeting.
         </p>
 
-        {/* Actions */}
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+            className="flex-1 py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-border-2 rounded-xl text-sm font-medium text-text-2 hover:text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Stay
           </button>
           <button
             ref={confirmBtnRef}
             onClick={onConfirm}
-            className="flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 rounded-xl text-sm font-semibold text-white transition-all shadow-lg shadow-red-600/20 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none"
+            className="flex-1 py-2.5 px-4 bg-danger hover:bg-[#dc2626] rounded-xl text-sm font-semibold text-white transition-all duration-200 shadow-lg shadow-danger/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
           >
             Leave
           </button>

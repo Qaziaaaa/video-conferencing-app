@@ -136,6 +136,6 @@ describe('Register', () => {
 
   test('renders branding', () => {
     renderRegister();
-    expect(screen.getByText('MeetSpace')).toBeInTheDocument();
+    expect(screen.getByText('Meet')).toBeInTheDocument();
   });
 });

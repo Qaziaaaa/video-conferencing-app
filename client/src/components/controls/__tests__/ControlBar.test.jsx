@@ -28,7 +28,7 @@ describe('ControlBar', () => {
     render(<ControlBar {...defaultProps} />);
     expect(screen.getByLabelText(/mute microphone/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/turn off camera/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/share screen/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/present screen/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/raise hand/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/enable background blur/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/open chat/i)).toBeInTheDocument();
@@ -90,7 +90,7 @@ describe('ControlBar', () => {
 
   test('shows stop screen sharing when sharing', () => {
     render(<ControlBar {...defaultProps} isScreenSharing={true} />);
-    expect(screen.getByLabelText(/stop screen sharing/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/stop presenting/i)).toBeInTheDocument();
   });
 
   test('shows lower hand when hand is raised', () => {

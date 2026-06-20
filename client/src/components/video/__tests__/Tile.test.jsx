@@ -26,12 +26,12 @@ describe('Tile', () => {
 
   test('shows screen sharing indicator', () => {
     render(<Tile participantId="p1" displayName="Alice" isScreenSharing={true} />);
-    expect(screen.getByText('Sharing')).toBeInTheDocument();
+    expect(screen.getByText('Presenting')).toBeInTheDocument();
   });
 
   test('shows dominant speaker border', () => {
     const { container } = render(<Tile participantId="p1" displayName="Alice" isDominantSpeaker={true} />);
-    expect(container.firstChild.className).toContain('border-blue-500');
+    expect(container.firstChild.className).toContain('border-accent');
   });
 
   test('shows remove button when onKick provided', () => {

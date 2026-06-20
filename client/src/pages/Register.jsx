@@ -21,7 +21,6 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Register
       const regRes = await fetch(`${SERVER_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,7 +33,6 @@ const Register = () => {
         return;
       }
 
-      // Auto-login after registration
       const loginRes = await fetch(`${SERVER_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -43,7 +41,6 @@ const Register = () => {
 
       const loginData = await loginRes.json();
       if (!loginRes.ok) {
-        // Registration succeeded but auto-login failed — redirect to login
         navigate('/login');
         return;
       }
@@ -58,31 +55,33 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        {/* Logo */}
+    <div className="min-h-screen bg-base flex items-center justify-center p-6">
+      <div className="w-full max-w-sm">
         <div className="flex items-center justify-center gap-3 mb-10">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+          <div className="w-11 h-11 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent-glow">
             <Video className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-white">MeetSpace</span>
+          <span className="text-xl font-bold text-white tracking-tight">Meet</span>
+          <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/15 text-accent rounded-md border border-accent/20 tracking-wide uppercase">Beta</span>
         </div>
 
-        <div className="bg-[#111118] border border-white/5 rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-2xl font-bold text-white mb-2">Create account</h1>
-          <p className="text-slate-400 text-sm mb-8">Join MeetSpace to start hosting meetings</p>
+        <div className="bg-surface border border-border rounded-2xl p-8 shadow-2xl">
+          <div className="mb-7">
+            <h1 className="text-2xl font-bold text-white tracking-tight">Create account</h1>
+            <p className="text-sm text-text-3 mt-1">Get started with Meet</p>
+          </div>
 
           {error && (
-            <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+            <div className="mb-5 px-4 py-2.5 bg-danger-soft border border-danger/20 rounded-xl text-danger text-sm animate-[fadeIn_0.2s_ease-out]">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Display Name</label>
+              <label className="block text-sm font-medium text-text-2 mb-1.5">Display Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-4" />
                 <input
                   type="text"
                   value={displayName}
@@ -91,30 +90,30 @@ const Register = () => {
                   minLength={1}
                   maxLength={50}
                   placeholder="Your name"
-                  className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full bg-base border border-border-2 rounded-xl pl-10 pr-4 py-3 text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+              <label className="block text-sm font-medium text-text-2 mb-1.5">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-4" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="you@example.com"
-                  className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full bg-base border border-border-2 rounded-xl pl-10 pr-4 py-3 text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+              <label className="block text-sm font-medium text-text-2 mb-1.5">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-4" />
                 <input
                   type="password"
                   value={password}
@@ -122,7 +121,7 @@ const Register = () => {
                   required
                   minLength={6}
                   placeholder="Min. 6 characters"
-                  className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full bg-base border border-border-2 rounded-xl pl-10 pr-4 py-3 text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 text-sm"
                 />
               </div>
             </div>
@@ -130,16 +129,16 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-white transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111118]"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-white text-sm transition-all duration-200 shadow-lg shadow-accent-glow active:scale-[0.98]"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-7 text-center text-sm text-text-4">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+            <Link to="/login" className="text-accent hover:text-accent-hover font-medium transition-colors duration-200">
               Sign in
             </Link>
           </p>

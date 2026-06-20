@@ -40,12 +40,12 @@ const ChatInput = ({ onSend, disabled = false }) => {
   const isOverLimit = text.length > MAX_LENGTH;
 
   return (
-    <div className="flex flex-col gap-1 p-3 border-t border-white/5">
+    <div className="flex flex-col gap-1 p-3 border-t border-border">
       {error && (
-        <p className="text-[11px] text-red-400 px-1">{error}</p>
+        <p className="text-[11px] text-danger px-1">{error}</p>
       )}
 
-      <div className={`flex items-end gap-2 bg-white/5 rounded-xl border transition-colors ${isOverLimit ? 'border-red-500/50' : 'border-white/10 focus-within:border-blue-500/50'}`}>
+      <div className={`flex items-end gap-2 bg-white/[0.03] rounded-xl border transition-colors duration-200 ${isOverLimit ? 'border-danger/50' : 'border-border focus-within:border-accent/50'}`}>
         <textarea
           value={text}
           onChange={handleChange}
@@ -53,7 +53,7 @@ const ChatInput = ({ onSend, disabled = false }) => {
           placeholder="Send a message… (Enter to send)"
           disabled={disabled}
           rows={1}
-          className="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none max-h-24 overflow-y-auto"
+          className="flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder-text-4 outline-none resize-none max-h-24 overflow-y-auto"
           style={{ minHeight: '40px' }}
         />
 
@@ -61,14 +61,14 @@ const ChatInput = ({ onSend, disabled = false }) => {
           onClick={handleSend}
           disabled={!text.trim() || isOverLimit || disabled}
           aria-label="Send message"
-          className="flex-shrink-0 mb-1.5 mr-1.5 w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition-all"
+          className="flex-shrink-0 mb-1.5 mr-1.5 w-8 h-8 flex items-center justify-center bg-accent hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition-all duration-200"
         >
           <Send size={14} className="text-white" />
         </button>
       </div>
 
       {text.length > MAX_LENGTH * 0.8 && (
-        <p className={`text-[10px] text-right px-1 ${isOverLimit ? 'text-red-400' : 'text-slate-500'}`}>
+        <p className={`text-[10px] text-right px-1 ${isOverLimit ? 'text-danger' : 'text-text-4'}`}>
           {remaining} remaining
         </p>
       )}

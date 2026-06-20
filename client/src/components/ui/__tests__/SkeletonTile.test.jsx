@@ -11,7 +11,7 @@ describe('SkeletonTile', () => {
   test('renders with expected structure', () => {
     const { container } = render(<SkeletonTile />);
     const el = container.firstChild;
-    expect(el.className).toContain('rounded-2xl');
-    expect(el.className).toContain('bg-[#111118]');
+    expect(el.className).toContain('rounded-xl');
+    expect(el.className).toContain('bg-surface');
   });
 });

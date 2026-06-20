@@ -10,7 +10,6 @@ const CopyLinkButton = ({ url, className = '' }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for browsers without clipboard API
       const el = document.createElement('textarea');
       el.value = url;
       document.body.appendChild(el);
@@ -26,10 +25,10 @@ const CopyLinkButton = ({ url, className = '' }) => {
     <button
       onClick={handleCopy}
       aria-label={copied ? 'Link copied!' : 'Copy meeting link'}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
         copied
-          ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-          : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10'
+          ? 'bg-success-soft text-success border border-success/30'
+          : 'bg-white/5 hover:bg-white/10 text-text-3 hover:text-white border border-border'
       } ${className}`}
     >
       {copied ? (

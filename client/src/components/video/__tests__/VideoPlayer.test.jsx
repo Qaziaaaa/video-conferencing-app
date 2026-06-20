@@ -26,6 +26,6 @@ describe('VideoPlayer', () => {
 
   test('handles null stream without error', () => {
     const { container } = render(<VideoPlayer stream={null} />);
-    expect(container.querySelector('video').srcObject).toBeUndefined();
+    expect([null, undefined]).toContain(container.querySelector('video').srcObject);
   });
 });

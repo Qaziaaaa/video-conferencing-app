@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 
-const VideoPlayer = ({ stream, muted = false, className = '' }) => {
+const VideoPlayer = ({ stream, muted = false, className = '', version = 0 }) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
+    if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream]);
+  }, [stream, version]);
 
   return (
     <video

@@ -4,6 +4,7 @@ import MeetingLayout from '../components/layout/MeetingLayout';
 import { useWebRTC } from '../hooks/useWebRTC';
 import { useChat } from '../hooks/useChat';
 import { useScreenShare } from '../hooks/useScreenShare';
+import { useRecording } from '../hooks/useRecording';
 import { useParticipants } from '../hooks/useParticipants';
 import { useNotifications } from '../hooks/useNotifications';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
@@ -44,6 +45,8 @@ const MeetingRoom = () => {
     replaceVideoTrack,
     originalCameraTrackRef
   );
+
+  const { toggleRecording } = useRecording();
 
   // ── Mute toggle — also emits media state ─────────────────────────────────
   const handleToggleMic = useCallback(() => {
@@ -136,6 +139,7 @@ const MeetingRoom = () => {
       onToggleCam={handleToggleCam}
       onToggleHand={handleToggleHand}
       onToggleScreenShare={handleToggleScreenShare}
+      onToggleRecording={toggleRecording}
       onLeave={handleLeave}
       onKickParticipant={handleKickParticipant}
     />

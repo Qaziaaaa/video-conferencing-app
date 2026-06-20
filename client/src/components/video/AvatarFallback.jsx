@@ -1,20 +1,16 @@
 import React from 'react';
 
-// 8 deterministic colors for avatar backgrounds
 const AVATAR_COLORS = [
-  'bg-blue-600',
-  'bg-violet-600',
-  'bg-emerald-600',
-  'bg-rose-600',
-  'bg-amber-600',
-  'bg-cyan-600',
-  'bg-pink-600',
-  'bg-indigo-600',
+  'bg-accent',
+  'bg-[#8b5cf6]',
+  'bg-success',
+  'bg-[#f43f5e]',
+  'bg-warning',
+  'bg-[#06b6d4]',
+  'bg-[#ec4899]',
+  'bg-accent',
 ];
 
-/**
- * Hash a string to a stable index in [0, AVATAR_COLORS.length)
- */
 const hashName = (name) => {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -23,10 +19,6 @@ const hashName = (name) => {
   return hash % AVATAR_COLORS.length;
 };
 
-/**
- * Extract up to 2 initials from a display name.
- * "John Doe" → "JD", "Alice" → "A", "  Bob  " → "B"
- */
 const getInitials = (displayName) => {
   const parts = displayName.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return '?';
@@ -46,7 +38,7 @@ const AvatarFallback = ({ displayName = '', size = 'md' }) => {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-[#111118]">
+    <div className="w-full h-full flex items-center justify-center bg-surface">
       <div
         className={`${colorClass} ${sizeClasses[size] || sizeClasses.md} rounded-full flex items-center justify-center font-bold text-white select-none shadow-lg`}
       >

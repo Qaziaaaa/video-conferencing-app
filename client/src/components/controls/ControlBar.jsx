@@ -8,6 +8,7 @@ import {
   Users,
   PhoneOff,
   Wand2,
+  Circle,
 } from 'lucide-react';
 
 const ControlButton = ({
@@ -15,25 +16,30 @@ const ControlButton = ({
   ariaLabel,
   active = true,
   danger = false,
+  toggled = false,
   badge = null,
   children,
   className = '',
 }) => {
-  const base = 'relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]';
-  const activeStyle = active
-    ? 'bg-white/10 hover:bg-white/20 text-white'
-    : 'bg-red-500/20 hover:bg-red-500/30 text-red-400';
-  const dangerStyle = 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/30';
+  let style = 'bg-white/8 hover:bg-white/14 text-white';
+  if (danger) {
+    style = 'bg-danger hover:bg-[#dc2626] text-white shadow-lg shadow-danger/25';
+  } else if (toggled) {
+    style = 'bg-accent-soft text-accent hover:bg-accent/20';
+  } else if (!active) {
+    style = 'bg-danger-soft hover:bg-danger/30 text-danger';
+  }
 
   return (
     <button
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`${base} ${danger ? dangerStyle : activeStyle} ${className}`}
+      title={ariaLabel}
+      className={`relative flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base ${style} ${className}`}
     >
       {children}
       {badge !== null && badge > 0 && (
-        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+        <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-accent text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg animate-[scaleIn_0.15s_ease-out]">
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -47,6 +53,7 @@ const ControlBar = ({
   isHandRaised,
   isScreenSharing,
   isBlurred,
+  isRecording,
   isChatOpen,
   isParticipantsOpen,
   unreadChatCount,
@@ -56,95 +63,103 @@ const ControlBar = ({
   onToggleHand,
   onToggleScreenShare,
   onToggleBlur,
+  onToggleRecording,
   onToggleChat,
   onToggleParticipants,
   onLeave,
 }) => {
   return (
-    <div className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0d0d14]/90 backdrop-blur-xl border-t border-white/5">
-      {/* Mic */}
-      <ControlButton
-        onClick={onToggleMic}
-        ariaLabel={isMicOn ? 'Mute microphone (M)' : 'Unmute microphone (M)'}
-        active={isMicOn}
-      >
-        {isMicOn ? <Mic size={20} /> : <MicOff size={20} />}
-      </ControlButton>
+    <div className="flex items-center justify-center gap-1.5 px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border">
+      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
+        <ControlButton
+          onClick={onToggleMic}
+          ariaLabel={isMicOn ? 'Mute microphone (M)' : 'Unmute microphone (M)'}
+          active={isMicOn}
+        >
+          {isMicOn ? <Mic size={18} /> : <MicOff size={18} />}
+        </ControlButton>
 
-      {/* Camera */}
-      <ControlButton
-        onClick={onToggleCam}
-        ariaLabel={isCamOn ? 'Turn off camera (V)' : 'Turn on camera (V)'}
-        active={isCamOn}
-      >
-        {isCamOn ? <Video size={20} /> : <VideoOff size={20} />}
-      </ControlButton>
+        <ControlButton
+          onClick={onToggleCam}
+          ariaLabel={isCamOn ? 'Turn off camera (V)' : 'Turn on camera (V)'}
+          active={isCamOn}
+        >
+          {isCamOn ? <Video size={18} /> : <VideoOff size={18} />}
+        </ControlButton>
 
-      {/* Screen Share */}
-      <ControlButton
-        onClick={onToggleScreenShare}
-        ariaLabel={isScreenSharing ? 'Stop screen sharing' : 'Share screen'}
-        active={!isScreenSharing}
-        className={isScreenSharing ? 'bg-blue-600/30 text-blue-400 hover:bg-blue-600/40' : ''}
-      >
-        {isScreenSharing ? <MonitorOff size={20} /> : <MonitorUp size={20} />}
-      </ControlButton>
+        <div className="w-px h-6 bg-white/[0.04] mx-0.5" />
 
-      {/* Raise Hand */}
-      <ControlButton
-        onClick={onToggleHand}
-        ariaLabel={isHandRaised ? 'Lower hand (H)' : 'Raise hand (H)'}
-        active={!isHandRaised}
-        className={isHandRaised ? 'bg-amber-500/30 text-amber-400 hover:bg-amber-500/40' : ''}
-      >
-        <Hand size={20} />
-      </ControlButton>
+        <ControlButton
+          onClick={onToggleScreenShare}
+          ariaLabel={isScreenSharing ? 'Stop presenting' : 'Present screen'}
+          active={!isScreenSharing}
+          toggled={isScreenSharing}
+        >
+          {isScreenSharing ? <MonitorOff size={18} /> : <MonitorUp size={18} />}
+        </ControlButton>
 
-      {/* Background Blur */}
-      <ControlButton
-        onClick={onToggleBlur}
-        ariaLabel={isBlurred ? 'Disable background blur' : 'Enable background blur'}
-        active={!isBlurred}
-        className={isBlurred ? 'bg-purple-500/30 text-purple-400 hover:bg-purple-500/40' : ''}
-      >
-        <Wand2 size={20} />
-      </ControlButton>
+        <ControlButton
+          onClick={onToggleHand}
+          ariaLabel={isHandRaised ? 'Lower hand (H)' : 'Raise hand (H)'}
+          active={!isHandRaised}
+          toggled={isHandRaised}
+          className={isHandRaised ? 'bg-warning-soft text-warning hover:bg-warning/20' : ''}
+        >
+          <Hand size={18} />
+        </ControlButton>
 
-      {/* Divider */}
-      <div className="w-px h-8 bg-white/10 mx-1" />
+        <ControlButton
+          onClick={onToggleBlur}
+          ariaLabel={isBlurred ? 'Disable background blur' : 'Enable background blur'}
+          active={!isBlurred}
+          toggled={isBlurred}
+          className={isBlurred ? 'bg-[#8b5cf6]/20 text-[#8b5cf6] hover:bg-[#8b5cf6]/30' : ''}
+        >
+          <Wand2 size={18} />
+        </ControlButton>
 
-      {/* Chat */}
-      <ControlButton
-        onClick={onToggleChat}
-        ariaLabel={isChatOpen ? 'Close chat' : 'Open chat'}
-        active={true}
-        badge={unreadChatCount}
-        className={isChatOpen ? 'bg-blue-600/20 text-blue-400' : ''}
-      >
-        <MessageSquare size={20} />
-      </ControlButton>
+        <ControlButton
+          onClick={onToggleRecording}
+          ariaLabel={isRecording ? 'Stop recording' : 'Start recording'}
+          active={!isRecording}
+          className={isRecording ? 'bg-danger-soft text-danger hover:bg-danger/30' : ''}
+        >
+          <Circle size={18} className={isRecording ? 'animate-[pulseRecording_1.5s_ease-in-out_infinite]' : ''} />
+        </ControlButton>
+      </div>
 
-      {/* Participants */}
-      <ControlButton
-        onClick={onToggleParticipants}
-        ariaLabel={isParticipantsOpen ? 'Close participants' : `Show participants (${participantCount})`}
-        active={true}
-        badge={participantCount}
-        className={isParticipantsOpen ? 'bg-blue-600/20 text-blue-400' : ''}
-      >
-        <Users size={20} />
-      </ControlButton>
+      <div className="w-3" />
 
-      {/* Divider */}
-      <div className="w-px h-8 bg-white/10 mx-1" />
+      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
+        <ControlButton
+          onClick={onToggleChat}
+          ariaLabel={isChatOpen ? 'Close chat' : 'Open chat'}
+          active={true}
+          toggled={isChatOpen}
+          badge={unreadChatCount}
+        >
+          <MessageSquare size={18} />
+        </ControlButton>
 
-      {/* Leave */}
+        <ControlButton
+          onClick={onToggleParticipants}
+          ariaLabel={isParticipantsOpen ? 'Close participants' : `Show participants (${participantCount})`}
+          active={true}
+          toggled={isParticipantsOpen}
+          badge={participantCount}
+        >
+          <Users size={18} />
+        </ControlButton>
+      </div>
+
+      <div className="w-3" />
+
       <ControlButton
         onClick={onLeave}
-        ariaLabel="Leave meeting (Escape)"
+        ariaLabel="Leave meeting"
         danger={true}
       >
-        <PhoneOff size={20} />
+        <PhoneOff size={18} />
       </ControlButton>
     </div>
   );

@@ -1,6 +1,6 @@
 const Meeting = require('../models/Meeting');
 
-const MAX_PARTICIPANTS = 8;
+const MAX_PARTICIPANTS = 4;
 
 const registerRoomHandlers = (io, socket, rooms) => {
   // join-room: { meetingId, displayName }

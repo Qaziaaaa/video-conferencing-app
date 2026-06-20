@@ -1,10 +1,31 @@
 import { create } from 'zustand';
 
+const SESSION_KEY = 'meetspace_session';
+
+const loadSession = () => {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveSession = (data) => {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch {
+    // sessionStorage full or unavailable
+  }
+};
+
+const persisted = loadSession();
+
 const useMeetingStore = create((set, get) => ({
   // Identity
-  meetingId: null,
+  meetingId: persisted.meetingId || null,
   localSocketId: null,
-  displayName: '',
+  displayName: persisted.displayName || '',
   isHost: false,
 
   // Media streams
@@ -34,12 +55,27 @@ const useMeetingStore = create((set, get) => ({
   // Dominant speaker
   dominantSpeakerSocketId: null,
 
+  // Screen share version bump — forces video elements to refresh on replaceTrack
+  screenShareVersion: 0,
+
+  // Recording
+  isRecording: false,
+  recordingError: null,
+
   // --- Actions ---
 
-  setMeetingId: (id) => set({ meetingId: id }),
+  setMeetingId: (id) => {
+    set({ meetingId: id });
+    saveSession({ ...loadSession(), meetingId: id });
+  },
   setLocalSocketId: (id) => set({ localSocketId: id }),
-  setDisplayName: (name) => set({ displayName: name }),
+  setDisplayName: (name) => {
+    set({ displayName: name });
+    saveSession({ ...loadSession(), displayName: name });
+  },
   setHost: (isHost) => set({ isHost }),
+  setIsRecording: (val) => set({ isRecording: val }),
+  setRecordingError: (err) => set({ recordingError: err }),
 
   setLocalStream: (stream) => set({ localStream: stream }),
   setScreenShareStream: (stream) => set({ screenShareStream: stream }),
@@ -113,11 +149,13 @@ const useMeetingStore = create((set, get) => ({
   toggleHand: () => set((state) => ({ isHandRaised: !state.isHandRaised })),
   toggleBlur: () => set((state) => ({ isBlurred: !state.isBlurred })),
 
-  setActiveScreenShare: (socketId) => set({ activeScreenShareSocketId: socketId }),
+  setActiveScreenShare: (socketId) =>
+    set((state) => ({ activeScreenShareSocketId: socketId, screenShareVersion: state.screenShareVersion + 1 })),
   setDominantSpeaker: (socketId) => set({ dominantSpeakerSocketId: socketId }),
 
   // Full reset when leaving a meeting
-  reset: () =>
+  reset: () => {
+    sessionStorage.removeItem(SESSION_KEY);
     set({
       meetingId: null,
       localSocketId: null,
@@ -137,7 +175,10 @@ const useMeetingStore = create((set, get) => ({
       activeScreenShareSocketId: null,
       dominantSpeakerSocketId: null,
       isBlurred: false,
-    }),
+      isRecording: false,
+      recordingError: null,
+    });
+  },
 }));
 
 export default useMeetingStore;

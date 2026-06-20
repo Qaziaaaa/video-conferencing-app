@@ -20,9 +20,9 @@ describe('Home', () => {
 
   test('renders branding and hero text', () => {
     renderHome();
-    expect(screen.getByText('MeetSpace')).toBeInTheDocument();
-    expect(screen.getByText(/meet without/i)).toBeInTheDocument();
-    expect(screen.getByText(/limits/i)).toBeInTheDocument();
+    expect(screen.getByText('Meet')).toBeInTheDocument();
+    expect(screen.getByText(/video calls for/i)).toBeInTheDocument();
+    expect(screen.getByText(/everyone/i)).toBeInTheDocument();
   });
 
   test('shows sign in and get started when not authenticated', () => {
@@ -54,7 +54,7 @@ describe('Home', () => {
 
   test('shows waiting room checkbox', () => {
     renderHome();
-    expect(screen.getByText('Enable Waiting Room')).toBeInTheDocument();
+    expect(screen.getByText('Enable waiting room')).toBeInTheDocument();
   });
 
   test('create meeting shows loading state and calls API', async () => {
@@ -107,7 +107,7 @@ describe('Home', () => {
   test('join form submits meeting code', async () => {
     const user = userEvent.setup();
     renderHome();
-    const input = screen.getByPlaceholderText('Enter meeting code or link');
+    const input = screen.getByPlaceholderText('Enter a code or link');
     await user.type(input, 'abc123');
     await user.click(screen.getByText('Join'));
   });
@@ -120,7 +120,7 @@ describe('Home', () => {
   test('join button enabled when input has text', async () => {
     const user = userEvent.setup();
     renderHome();
-    const input = screen.getByPlaceholderText('Enter meeting code or link');
+    const input = screen.getByPlaceholderText('Enter a code or link');
     await user.type(input, 'abc');
     expect(screen.getByText('Join').closest('button')).toBeEnabled();
   });
@@ -128,7 +128,7 @@ describe('Home', () => {
   test('extracts meetingId from full URL on join', async () => {
     const user = userEvent.setup();
     renderHome();
-    const input = screen.getByPlaceholderText('Enter meeting code or link');
+    const input = screen.getByPlaceholderText('Enter a code or link');
     await user.type(input, 'http://example.com/meeting/m123');
     await user.click(screen.getByText('Join'));
   });
@@ -168,10 +168,10 @@ describe('Home', () => {
 
   test('renders feature grid', () => {
     renderHome();
-    expect(screen.getByText('HD Video')).toBeInTheDocument();
-    expect(screen.getByText('Live Chat')).toBeInTheDocument();
-    expect(screen.getByText('Screen Share')).toBeInTheDocument();
-    expect(screen.getByText('Raise Hand')).toBeInTheDocument();
+    expect(screen.getByText('HD video')).toBeInTheDocument();
+    expect(screen.getByText('Live chat')).toBeInTheDocument();
+    expect(screen.getByText('Screen share')).toBeInTheDocument();
+    expect(screen.getByText('Raise hand')).toBeInTheDocument();
   });
 
   test('waiting room checkbox toggles state', async () => {
@@ -191,7 +191,7 @@ describe('Home', () => {
       json: async () => ({ meetingId: 'm1', shareUrl: 'http://localhost:5000/meeting/m1' }),
     });
     renderHome();
-    await user.click(screen.getByText('Enable Waiting Room'));
+    await user.click(screen.getByText('Enable waiting room'));
     await user.click(screen.getByText('New meeting'));
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(

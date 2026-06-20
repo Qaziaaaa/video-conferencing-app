@@ -22,7 +22,7 @@ describe('Login', () => {
     renderLogin();
     expect(screen.getByText('Welcome back')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
     expect(screen.getByText('Sign in')).toBeInTheDocument();
   });
 
@@ -44,7 +44,7 @@ describe('Login', () => {
     });
     renderLogin();
     await user.type(screen.getByPlaceholderText('you@example.com'), 'a@b.com');
-    await user.type(screen.getByPlaceholderText('••••••••'), 'password123');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'password123');
     await user.click(screen.getByText('Sign in'));
     await waitFor(() => {
       expect(useAuthStore.getState().token).toBe('tok123');
@@ -58,7 +58,7 @@ describe('Login', () => {
     global.fetch = vi.fn().mockReturnValue(new Promise((r) => { resolvePromise = r; }));
     renderLogin();
     await user.type(screen.getByPlaceholderText('you@example.com'), 'a@b.com');
-    await user.type(screen.getByPlaceholderText('••••••••'), 'password123');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'password123');
     await user.click(screen.getByText('Sign in'));
     expect(screen.getByText('Signing in…')).toBeInTheDocument();
     expect(screen.getByText('Signing in…').closest('button')).toBeDisabled();
@@ -76,7 +76,7 @@ describe('Login', () => {
     });
     renderLogin();
     await user.type(screen.getByPlaceholderText('you@example.com'), 'a@b.com');
-    await user.type(screen.getByPlaceholderText('••••••••'), 'wrong');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'wrong');
     await user.click(screen.getByText('Sign in'));
     await waitFor(() => {
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe('Login', () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
     renderLogin();
     await user.type(screen.getByPlaceholderText('you@example.com'), 'a@b.com');
-    await user.type(screen.getByPlaceholderText('••••••••'), 'password');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'password');
     await user.click(screen.getByText('Sign in'));
     await waitFor(() => {
       expect(screen.getByText('Network error. Is the server running?')).toBeInTheDocument();
@@ -102,11 +102,11 @@ describe('Login', () => {
 
   test('password input is required', () => {
     renderLogin();
-    expect(screen.getByPlaceholderText('••••••••')).toBeRequired();
+    expect(screen.getByPlaceholderText('Enter your password')).toBeRequired();
   });
 
   test('renders logo and branding', () => {
     renderLogin();
-    expect(screen.getByText('MeetSpace')).toBeInTheDocument();
+    expect(screen.getByText('Meet')).toBeInTheDocument();
   });
 });
