@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { createPortal } from 'react-dom';
 import useMeetingStore from '../../store/useMeetingStore';
-
-const REACTION_EMOJIS = ['👍', '❤️', '😂', '🎉', '😮', '👏', '🔥', '🎊'];
 
 const EmojiReaction = () => {
   const reactions = useMeetingStore((s) => s.reactions);
 
   if (reactions.length === 0) return null;
 
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999, transform: 'translateZ(0)' }}>
+  // Portal to document.body so we're outside all video stacking contexts
+  return createPortal(
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999 }}>
       {reactions.map((r) => (
         <span
           key={r.id}
@@ -30,7 +30,8 @@ const EmojiReaction = () => {
           100% { opacity: 0; transform: translateY(-200px) scale(1); }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 };
 

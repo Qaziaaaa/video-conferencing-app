@@ -1,6 +1,5 @@
 import React from 'react';
 import VideoGrid from '../video/VideoGrid';
-import EmojiReaction from '../video/EmojiReaction';
 import ControlBar from '../controls/ControlBar';
 import ChatPanel from '../chat/ChatPanel';
 import ParticipantsPanel from '../participants/ParticipantsPanel';
@@ -49,8 +48,6 @@ const MeetingLayout = ({
             <VideoGrid onKickParticipant={onKickParticipant} />
           </div>
         </div>
-
-        <EmojiReaction />
 
         <ChatPanel
           socket={socket}
