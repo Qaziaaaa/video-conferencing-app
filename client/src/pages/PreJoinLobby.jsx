@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Video, VideoOff, Mic, MicOff, Loader2, AlertCircle } from 'lucide-react';
+import { Video, VideoOff, Mic, MicOff, Loader2, AlertCircle, Camera } from 'lucide-react';
 import useMeetingStore from '../store/useMeetingStore';
 import useAuthStore from '../store/useAuthStore';
 
@@ -22,6 +22,7 @@ const PreJoinLobby = () => {
   const [isCamOn, setIsCamOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const [joining, setJoining] = useState(false);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
     const validate = async () => {
@@ -39,37 +40,38 @@ const PreJoinLobby = () => {
     validate();
   }, [meetingId, navigate]);
 
-  useEffect(() => {
-    const getMedia = async () => {
-      try {
-        const s = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720 },
-          audio: true,
-        });
-        streamRef.current = s;
-        setStream(s);
-        if (videoRef.current) videoRef.current.srcObject = s;
-      } catch (err) {
-        if (err.name === 'NotAllowedError') {
-          setMediaError('Camera and microphone access denied. You can still join with audio/video off.');
-        } else if (err.name === 'NotFoundError') {
-          setMediaError('No camera or microphone found. You can still join.');
-        } else {
-          setMediaError(`Media error: ${err.message}`);
-        }
-        try {
-          const audioOnly = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-          streamRef.current = audioOnly;
-          setStream(audioOnly);
-          setIsCamOn(false);
-        } catch {
-          setIsCamOn(false);
-          setIsMicOn(false);
-        }
+  const startMedia = useCallback(async () => {
+    setStarted(true);
+    setMediaError('');
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: true,
+      });
+      streamRef.current = s;
+      setStream(s);
+      if (videoRef.current) videoRef.current.srcObject = s;
+    } catch (err) {
+      if (err.name === 'NotAllowedError') {
+        setMediaError('Camera and microphone access denied. You can still join with audio/video off.');
+      } else if (err.name === 'NotFoundError') {
+        setMediaError('No camera or microphone found. You can still join.');
+      } else {
+        setMediaError(`Media error: ${err.message}`);
       }
-    };
-    getMedia();
+      try {
+        const audioOnly = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        streamRef.current = audioOnly;
+        setStream(audioOnly);
+        setIsCamOn(false);
+      } catch {
+        setIsCamOn(false);
+        setIsMicOn(false);
+      }
+    }
+  }, []);
 
+  useEffect(() => {
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
@@ -117,56 +119,74 @@ const PreJoinLobby = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-base flex items-center justify-center p-6">
-      <div className="w-full max-w-4xl">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div className="relative aspect-video bg-surface-2 rounded-2xl overflow-hidden border border-border shadow-2xl">
-            {stream && isCamOn ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover scale-x-[-1]"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-text-4">
-                <VideoOff className="w-10 h-10" />
-                <p className="text-sm">Camera is off</p>
-              </div>
-            )}
+  const showPlaceholder = !stream && !started;
+  const showStream = stream || (started && !stream);
 
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
-              <button
-                onClick={toggleMic}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                  isMicOn
-                    ? 'bg-white/10 hover:bg-white/20 text-white'
-                    : 'bg-danger-soft hover:bg-danger/30 text-danger'
-                }`}
-                aria-label={isMicOn ? 'Mute microphone' : 'Unmute microphone'}
-              >
-                {isMicOn ? <Mic className="w-[18px] h-[18px]" /> : <MicOff className="w-[18px] h-[18px]" />}
-              </button>
-              <button
-                onClick={toggleCam}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                  isCamOn
-                    ? 'bg-white/10 hover:bg-white/20 text-white'
-                    : 'bg-danger-soft hover:bg-danger/30 text-danger'
-                }`}
-                aria-label={isCamOn ? 'Turn off camera' : 'Turn on camera'}
-              >
-                {isCamOn ? <Video className="w-[18px] h-[18px]" /> : <VideoOff className="w-[18px] h-[18px]" />}
-              </button>
-            </div>
+  return (
+    <div className="min-h-screen bg-base flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-4xl">
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10 items-center">
+          <div className="relative w-full aspect-video bg-surface-2 rounded-2xl overflow-hidden border border-border shadow-2xl">
+            {showPlaceholder ? (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-text-4 p-6 text-center">
+                <Camera className="w-10 h-10" />
+                <p className="text-sm">Tap to enable camera & microphone</p>
+                <button
+                  onClick={startMedia}
+                  className="mt-2 px-5 py-2.5 bg-accent hover:bg-accent-hover text-white rounded-xl font-medium text-sm transition-all active:scale-95 shadow-lg shadow-accent-glow"
+                >
+                  Start camera
+                </button>
+              </div>
+            ) : (
+              <>
+                {stream && isCamOn ? (
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover scale-x-[-1]"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-text-4">
+                    <VideoOff className="w-10 h-10" />
+                    <p className="text-sm">Camera is off</p>
+                  </div>
+                )}
+
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
+                  <button
+                    onClick={toggleMic}
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                      isMicOn
+                        ? 'bg-white/10 hover:bg-white/20 text-white'
+                        : 'bg-danger-soft hover:bg-danger/30 text-danger'
+                    }`}
+                    aria-label={isMicOn ? 'Mute microphone' : 'Unmute microphone'}
+                  >
+                    {isMicOn ? <Mic className="w-[18px] h-[18px]" /> : <MicOff className="w-[18px] h-[18px]" />}
+                  </button>
+                  <button
+                    onClick={toggleCam}
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                      isCamOn
+                        ? 'bg-white/10 hover:bg-white/20 text-white'
+                        : 'bg-danger-soft hover:bg-danger/30 text-danger'
+                    }`}
+                    aria-label={isCamOn ? 'Turn off camera' : 'Turn on camera'}
+                  >
+                    {isCamOn ? <Video className="w-[18px] h-[18px]" /> : <VideoOff className="w-[18px] h-[18px]" />}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5 w-full max-w-sm md:max-w-none">
             <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight mb-1">Ready to join?</h1>
-              <p className="text-sm text-text-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-1">Ready to join?</h1>
+              <p className="text-sm text-text-3 break-all">
                 Meeting: <span className="text-accent font-mono font-medium">{meetingId}</span>
               </p>
             </div>

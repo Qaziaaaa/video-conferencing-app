@@ -1,19 +1,46 @@
 import { create } from 'zustand';
 
-// JWT stored in-memory only (not localStorage) to prevent XSS token theft
+const STORAGE_KEY = 'freemeet_auth';
+
+const loadPersisted = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+};
+
+const persist = (data) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+};
+
+const clearPersisted = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {}
+};
+
+const persisted = loadPersisted();
+
 const useAuthStore = create((set, get) => ({
-  token: null,
-  userId: null,
-  email: null,
-  displayName: null,
+  token: persisted?.token || null,
+  userId: persisted?.userId || null,
+  email: persisted?.email || null,
+  displayName: persisted?.displayName || null,
 
-  setAuth: (token, userId, email, displayName) =>
-    set({ token, userId, email, displayName }),
+  setAuth: (token, userId, email, displayName) => {
+    const data = { token, userId, email, displayName };
+    persist(data);
+    set(data);
+  },
 
-  clearAuth: () =>
-    set({ token: null, userId: null, email: null, displayName: null }),
+  clearAuth: () => {
+    clearPersisted();
+    set({ token: null, userId: null, email: null, displayName: null });
+  },
 
-  // Computed property - call get().isAuthenticated() to check auth status
   isAuthenticated: () => !!get().token,
 }));
 

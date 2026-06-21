@@ -85,15 +85,18 @@ describe('PreJoinLobby', () => {
   });
 
   test('shows camera preview when media is available', async () => {
+    const user = userEvent.setup();
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     renderPreJoinLobby();
+    await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
     await waitFor(() => {
-      expect(screen.getByText('Ready to join?')).toBeInTheDocument();
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
     });
-    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
   });
 
   test('shows media error when camera access denied', async () => {
+    const user = userEvent.setup();
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     const deniedError = new Error('Permission denied');
     deniedError.name = 'NotAllowedError';
@@ -101,12 +104,15 @@ describe('PreJoinLobby', () => {
       .mockRejectedValueOnce(deniedError)
       .mockResolvedValue(createMockStream());
     renderPreJoinLobby();
+    await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
     await waitFor(() => {
       expect(screen.getByText(/Camera and microphone access denied/i)).toBeInTheDocument();
     });
   });
 
   test('shows media error when no device found', async () => {
+    const user = userEvent.setup();
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     const notFoundError = new Error('Not found');
     notFoundError.name = 'NotFoundError';
@@ -114,6 +120,8 @@ describe('PreJoinLobby', () => {
       .mockRejectedValueOnce(notFoundError)
       .mockResolvedValue(createMockStream());
     renderPreJoinLobby();
+    await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
     await waitFor(() => {
       expect(screen.getByText(/No camera or microphone found/i)).toBeInTheDocument();
     });
@@ -124,6 +132,8 @@ describe('PreJoinLobby', () => {
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     renderPreJoinLobby();
     await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
+    await waitFor(() => screen.getByLabelText('Mute microphone'));
     const micBtn = screen.getByLabelText('Mute microphone');
     await user.click(micBtn);
     expect(screen.getByLabelText('Unmute microphone')).toBeInTheDocument();
@@ -134,6 +144,8 @@ describe('PreJoinLobby', () => {
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     renderPreJoinLobby();
     await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
+    await waitFor(() => screen.getByLabelText('Turn off camera'));
     const camBtn = screen.getByLabelText('Turn off camera');
     await user.click(camBtn);
     expect(screen.getByLabelText('Turn on camera')).toBeInTheDocument();
@@ -221,6 +233,8 @@ describe('PreJoinLobby', () => {
     useAuthStore.getState().setAuth('tok', 'uid', 'e@m.com', 'Alice');
     renderPreJoinLobby('m1');
     await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
+    await waitFor(() => screen.getByLabelText('Mute microphone'));
     const input = screen.getByPlaceholderText('Enter your display name');
     await user.clear(input);
     await user.type(input, 'Alice');
@@ -231,11 +245,14 @@ describe('PreJoinLobby', () => {
   });
 
   test('stops preview tracks on unmount', async () => {
+    const user = userEvent.setup();
     global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
     const mockStream = createMockStream();
     navigator.mediaDevices.getUserMedia = vi.fn().mockResolvedValue(mockStream);
     const { unmount } = renderPreJoinLobby();
     await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
+    await waitFor(() => screen.getByLabelText('Mute microphone'));
     unmount();
     expect(mockStream.getTracks()[0].stop).toHaveBeenCalled();
     expect(mockStream.getTracks()[1].stop).toHaveBeenCalled();

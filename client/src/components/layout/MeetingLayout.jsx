@@ -41,8 +41,8 @@ const MeetingLayout = ({
       <AdmissionPanel socket={socket} />
 
       <div className="flex-1 relative min-h-0">
-        <div className={`h-full transition-all duration-300 ease-out ${isChatOpen || isParticipantsOpen ? 'mr-80' : ''}`}>
-          <div className="h-full p-3">
+        <div className={`h-full transition-all duration-300 ease-out ${(isChatOpen || isParticipantsOpen) ? 'md:mr-80' : ''}`}>
+          <div className="h-full p-2 sm:p-3">
             <VideoGrid onKickParticipant={onKickParticipant} />
           </div>
         </div>

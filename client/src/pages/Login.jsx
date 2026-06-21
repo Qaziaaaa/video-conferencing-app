@@ -45,19 +45,19 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base flex items-center justify-center p-6">
+    <div className="min-h-screen bg-base flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-sm">
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <div className="w-11 h-11 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent-glow">
+        <div className="flex items-center justify-center gap-3 mb-8 sm:mb-10">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent-glow">
             <Video className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-white tracking-tight">Meet</span>
           <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/15 text-accent rounded-md border border-accent/20 tracking-wide uppercase">Beta</span>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-8 shadow-2xl">
-          <div className="mb-7">
-            <h1 className="text-2xl font-bold text-white tracking-tight">Welcome back</h1>
+        <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8 shadow-2xl">
+          <div className="mb-6 sm:mb-7">
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Welcome back</h1>
             <p className="text-sm text-text-3 mt-1">Sign in to continue</p>
           </div>
 

@@ -78,21 +78,22 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-base flex flex-col">
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-border">
-        <Link to="/" className="flex items-center gap-3 group">
+      <nav className="flex items-center justify-between gap-2 px-4 sm:px-6 py-4 border-b border-border">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
           <div className="w-9 h-9 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent-glow transition-all duration-300 group-hover:shadow-xl group-hover:shadow-accent-glow group-hover:scale-105">
             <Video className="w-[18px] h-[18px] text-white" />
           </div>
-          <span className="font-bold text-xl text-white tracking-tight">Meet</span>
+          <span className="font-bold text-lg sm:text-xl text-white tracking-tight">Meet</span>
           <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/15 text-accent rounded-md border border-accent/20 tracking-wide uppercase">Beta</span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {token ? (
             <>
-              <span className="text-sm text-text-2 hidden sm:block">{displayName}</span>
+              <span className="text-sm text-text-2 hidden sm:block truncate max-w-[120px]">{displayName}</span>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-text-2 hover:text-white border border-border-2 hover:border-white/20 rounded-xl transition-all duration-200"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm text-text-2 hover:text-white border border-border-2 hover:border-white/20 rounded-xl transition-all duration-200"
+                aria-label="Sign out"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:block">Sign out</span>
@@ -102,13 +103,13 @@ const Home = () => {
             <>
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm text-text-2 hover:text-white transition-colors duration-200"
+                className="px-3 sm:px-4 py-2 text-sm text-text-2 hover:text-white transition-colors duration-200"
               >
                 Sign in
               </Link>
               <Link
                 to="/register"
-                className="px-5 py-2 text-sm bg-accent hover:bg-accent-hover text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-accent-glow"
+                className="px-4 sm:px-5 py-2 text-sm bg-accent hover:bg-accent-hover text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-accent-glow"
               >
                 Get started
               </Link>
@@ -120,12 +121,12 @@ const Home = () => {
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
         <div className="max-w-2xl w-full text-center space-y-10">
           <div className="space-y-4">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]">
               Video calls for
               <br />
               <span className="text-accent">everyone</span>
             </h1>
-            <p className="text-lg text-text-2 max-w-lg mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-text-2 max-w-lg mx-auto leading-relaxed">
               HD video, real-time chat, and screen sharing — right in your browser. No downloads required.
             </p>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-warning-soft/50 border border-warning/20 rounded-xl text-xs text-warning font-medium">
@@ -144,7 +145,7 @@ const Home = () => {
             <button
               onClick={handleCreate}
               disabled={creating}
-              className="flex items-center gap-2.5 px-7 py-3.5 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-white transition-all duration-200 shadow-lg shadow-accent-glow active:scale-[0.97]"
+              className="flex items-center justify-center gap-2.5 px-7 py-3.5 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold text-white transition-all duration-200 shadow-lg shadow-accent-glow active:scale-[0.97] w-full sm:w-auto"
             >
               {creating ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -154,24 +155,24 @@ const Home = () => {
               {creating ? 'Creating…' : 'New meeting'}
             </button>
 
-            <div className="flex items-center gap-3">
-              <div className="h-px w-6 bg-white/10" />
-              <span className="text-xs text-text-4 font-medium">or</span>
-              <div className="h-px w-6 bg-white/10" />
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="flex-1 sm:h-px h-px bg-white/10" />
+              <span className="text-xs text-text-4 font-medium shrink-0">or</span>
+              <div className="flex-1 sm:h-px h-px bg-white/10" />
             </div>
 
-            <form onSubmit={handleJoin} className="flex items-center bg-surface-2 border border-border-2 rounded-xl focus-within:border-accent/50 transition-all duration-200 overflow-hidden">
+            <form onSubmit={handleJoin} className="flex items-center w-full sm:w-auto bg-surface-2 border border-border-2 rounded-xl focus-within:border-accent/50 transition-all duration-200 overflow-hidden">
               <input
                 type="text"
                 placeholder="Enter a code or link"
                 value={roomInput}
                 onChange={(e) => setRoomInput(e.target.value)}
-                className="bg-transparent px-4 py-3.5 outline-none w-44 text-sm text-white placeholder-text-4"
+                className="bg-transparent px-4 py-3.5 outline-none flex-1 sm:w-44 text-sm text-white placeholder-text-4"
               />
               <button
                 type="submit"
                 disabled={!roomInput.trim()}
-                className="flex items-center gap-1.5 px-4 py-3.5 bg-white/5 hover:bg-white/10 text-accent font-medium disabled:opacity-40 transition-all duration-200 text-sm"
+                className="flex items-center gap-1.5 px-4 py-3.5 bg-white/5 hover:bg-white/10 text-accent font-medium disabled:opacity-40 transition-all duration-200 text-sm shrink-0"
               >
                 <LogIn className="w-4 h-4" />
                 Join

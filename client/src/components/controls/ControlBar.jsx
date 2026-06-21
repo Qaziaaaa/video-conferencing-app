@@ -35,7 +35,7 @@ const ControlButton = ({
       onClick={onClick}
       aria-label={ariaLabel}
       title={ariaLabel}
-      className={`relative flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base ${style} ${className}`}
+      className={`relative flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-base ${style} ${className}`}
     >
       {children}
       {badge !== null && badge > 0 && (

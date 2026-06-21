@@ -49,8 +49,8 @@ const VideoGrid = ({ onKickParticipant }) => {
     const sidebarIds = sidebarParticipants(allParticipantIds, activeScreenShareSocketId);
 
     return (
-      <div className="flex h-full gap-3">
-        <div className="flex-1 relative min-w-0">
+      <div className="flex flex-col md:flex-row h-full gap-3">
+        <div className="flex-1 relative min-h-0 min-w-0 aspect-video md:aspect-auto">
           <Tile
             participantId={activeScreenShareSocketId}
             displayName={sharerParticipant?.displayName || 'Unknown'}
@@ -67,7 +67,7 @@ const VideoGrid = ({ onKickParticipant }) => {
           />
 
           {isLocalSharer && (
-            <div className="absolute bottom-4 right-4 w-44 h-28 rounded-xl overflow-hidden border-2 border-white/10 shadow-2xl bg-surface z-10 animate-[pipIn_0.25s_ease-out]">
+            <div className="absolute bottom-4 right-4 w-28 h-18 sm:w-44 sm:h-28 rounded-xl overflow-hidden border-2 border-white/10 shadow-2xl bg-surface z-10 animate-[pipIn_0.25s_ease-out]">
               <Tile
                 participantId={localSocketId}
                 displayName={displayName}
@@ -88,12 +88,12 @@ const VideoGrid = ({ onKickParticipant }) => {
         </div>
 
         {sidebarIds.length > 0 && (
-          <div className="flex flex-col gap-2 w-52 flex-shrink-0 overflow-y-auto custom-scrollbar pr-0.5">
+          <div className="flex md:flex-col gap-2 w-full md:w-52 flex-shrink-0 overflow-x-auto md:overflow-y-auto custom-scrollbar pr-0.5">
             {sidebarIds.map((id) => {
               const p = participants[id];
               const isLocalTile = id === localSocketId;
               return (
-                <div key={id} className="flex-shrink-0 h-28">
+                <div key={id} className="flex-shrink-0 w-28 md:w-full h-20 md:h-28">
                   <Tile
                     participantId={id}
                     displayName={isLocalTile ? displayName : p?.displayName || 'Unknown'}

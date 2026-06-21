@@ -57,8 +57,10 @@ const ChatPanel = ({ socket, isOpen, onClose }) => {
   return (
     <div
       className={`
-        absolute top-0 right-0 h-full w-80 bg-surface border-l border-border
-        flex flex-col transition-all duration-300 ease-out z-20 shadow-2xl
+        md:absolute md:top-0 md:right-0 md:h-full md:w-80 md:border-l md:border-border md:shadow-2xl
+        fixed inset-0 z-30
+        bg-surface
+        flex flex-col transition-all duration-300 ease-out
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
       `}
     >
