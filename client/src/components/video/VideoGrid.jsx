@@ -124,9 +124,8 @@ const VideoGrid = ({ onKickParticipant }) => {
   const { cols } = getGridLayout(totalCount);
 
   return (
-    <div className="relative h-full">
+    <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr relative`}>
       <EmojiReaction />
-      <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr`}>
       {allParticipantIds.map((id) => {
         const p = participants[id];
         const isLocalTile = id === localSocketId;
@@ -168,7 +167,6 @@ const VideoGrid = ({ onKickParticipant }) => {
           version={screenShareVersion}
         />
       )}
-    </div>
     </div>
   );
 };

@@ -99,8 +99,11 @@ const MeetingRoom = () => {
 
   // ── Emoji reaction ─────────────────────────────────────────────────────────
   const handleReact = useCallback((emoji) => {
-    socket?.emit('emoji-reaction', { meetingId, emoji, displayName });
-  }, [socket, meetingId, displayName]);
+    // Optimistic local update — appears instantly without server round-trip
+    useMeetingStore.getState().addReaction(emoji, socketRef.current?.id, displayName);
+    // Also send to remote peers
+    socketRef.current?.emit('emoji-reaction', { meetingId, emoji, displayName });
+  }, [meetingId, displayName]);
 
   // ── Lock/unlock meeting ─────────────────────────────────────────────────────
   const handleToggleLock = useCallback(() => {
