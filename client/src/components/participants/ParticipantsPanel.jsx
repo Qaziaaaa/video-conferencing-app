@@ -18,8 +18,8 @@ const ParticipantsPanel = ({ isOpen, onClose, onKick }) => {
   return (
     <div
       className={`
-        md:absolute md:top-0 md:right-0 md:h-full md:w-72 md:border-l md:border-border md:shadow-2xl
-        fixed inset-0 z-30
+        fixed md:absolute inset-0 md:inset-auto md:top-0 md:right-0 md:h-full md:w-72 z-30
+        md:border-l md:border-border md:shadow-2xl
         bg-surface
         flex flex-col transition-all duration-300 ease-out
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}

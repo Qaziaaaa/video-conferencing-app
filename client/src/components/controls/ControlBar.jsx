@@ -69,8 +69,8 @@ const ControlBar = ({
   onLeave,
 }) => {
   return (
-    <div className="flex items-center justify-center gap-1.5 px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border">
-      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
+    <div className="flex items-center justify-center gap-1.5 px-2 sm:px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border overflow-x-auto custom-scrollbar">
+      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03] shrink-0">
         <ControlButton
           onClick={onToggleMic}
           ariaLabel={isMicOn ? 'Mute microphone (M)' : 'Unmute microphone (M)'}
