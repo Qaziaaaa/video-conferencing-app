@@ -9,11 +9,11 @@ const EmojiReaction = () => {
   if (reactions.length === 0) return null;
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999, transform: 'translateZ(0)' }}>
       {reactions.map((r) => (
         <span
           key={r.id}
-          className="absolute text-3xl sm:text-4xl animate-[slideUp_0.8s_ease-out_forwards]"
+          className="absolute text-3xl sm:text-4xl"
           style={{
             left: `${15 + Math.random() * 70}%`,
             bottom: '20%',
