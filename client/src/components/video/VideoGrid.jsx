@@ -1,6 +1,5 @@
 import React from 'react';
 import Tile from './Tile';
-import EmojiReaction from './EmojiReaction';
 import useMeetingStore from '../../store/useMeetingStore';
 
 export const getGridLayout = (count) => {
