@@ -116,7 +116,11 @@ const PreJoinLobby = () => {
     setMeetingId(meetingId);
     setDisplayName(displayName.trim());
 
-    if (stream) setLocalStream(stream);
+    if (stream) {
+      setLocalStream(stream);
+      // Clear ref so cleanup effect doesn't stop the transferred stream
+      streamRef.current = null;
+    }
 
     if (!token) {
       navigate(`/login?redirect=/meeting/${meetingId}/room`);
