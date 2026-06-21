@@ -52,7 +52,6 @@ const VideoGrid = ({ onKickParticipant }) => {
     return (
       <div className="flex flex-col md:flex-row h-full gap-3">
         <div className="flex-1 relative min-h-0 min-w-0 aspect-video md:aspect-auto">
-          <EmojiReaction />
           <Tile
             participantId={activeScreenShareSocketId}
             displayName={sharerParticipant?.displayName || 'Unknown'}
@@ -87,6 +86,7 @@ const VideoGrid = ({ onKickParticipant }) => {
               />
             </div>
           )}
+          <EmojiReaction />
         </div>
 
         {sidebarIds.length > 0 && (
@@ -124,7 +124,9 @@ const VideoGrid = ({ onKickParticipant }) => {
   const { cols } = getGridLayout(totalCount);
 
   return (
-    <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr`}>
+    <div className="relative h-full">
+      <EmojiReaction />
+      <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr`}>
       {allParticipantIds.map((id) => {
         const p = participants[id];
         const isLocalTile = id === localSocketId;
@@ -166,6 +168,7 @@ const VideoGrid = ({ onKickParticipant }) => {
           version={screenShareVersion}
         />
       )}
+    </div>
     </div>
   );
 };
