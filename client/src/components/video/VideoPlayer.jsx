@@ -16,6 +16,7 @@ const VideoPlayer = ({ stream, muted = false, className = '', version = 0 }) => 
       playsInline
       muted={muted}
       className={`w-full h-full object-cover ${className}`}
+      style={{ transform: 'translateZ(0)' }}
     />
   );
 };

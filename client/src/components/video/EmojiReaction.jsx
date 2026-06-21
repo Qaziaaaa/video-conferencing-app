@@ -9,7 +9,7 @@ const EmojiReaction = () => {
 
   // Portal to document.body so we're outside all video stacking contexts
   return createPortal(
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999 }}>
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999, willChange: 'transform', isolation: 'isolate' }}>
       {reactions.map((r) => (
         <span
           key={r.id}

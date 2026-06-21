@@ -26,7 +26,7 @@ const Tile = ({
     <div
       className={`
         relative w-full h-full rounded-xl overflow-hidden bg-surface
-        border transition-all duration-300
+        border transition-all duration-300 isolate
         ${isDominantSpeaker
           ? 'border-accent shadow-[0_0_20px_rgba(99,102,241,0.2)]'
           : 'border-border hover:border-white/10'
