@@ -62,6 +62,18 @@ const useMeetingStore = create((set, get) => ({
   isRecording: false,
   recordingError: null,
 
+  // Pinned participant
+  pinnedSocketId: null,
+
+  // Active emoji reactions (array of { id, emoji, socketId, displayName, createdAt })
+  reactions: [],
+
+  // Room lock state
+  isRoomLocked: false,
+
+  // Meeting password requirement
+  passwordRequired: false,
+
   // --- Actions ---
 
   setMeetingId: (id) => {
@@ -153,6 +165,24 @@ const useMeetingStore = create((set, get) => ({
     set((state) => ({ activeScreenShareSocketId: socketId, screenShareVersion: state.screenShareVersion + 1 })),
   setDominantSpeaker: (socketId) => set({ dominantSpeakerSocketId: socketId }),
 
+  setPinnedParticipant: (socketId) => set({ pinnedSocketId: socketId }),
+  clearPinnedParticipant: () => set({ pinnedSocketId: null }),
+
+  addReaction: (emoji, socketId, displayName) => {
+    const id = `reaction-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const reaction = { id, emoji, socketId, displayName, createdAt: Date.now() };
+    set((state) => ({ reactions: [...state.reactions, reaction] }));
+    // Auto-remove after 2s
+    setTimeout(() => {
+      set((state) => ({
+        reactions: state.reactions.filter((r) => r.id !== id),
+      }));
+    }, 2000);
+  },
+
+  setRoomLocked: (locked) => set({ isRoomLocked: locked }),
+  setPasswordRequired: (required) => set({ passwordRequired: required }),
+
   // Full reset when leaving a meeting
   reset: () => {
     sessionStorage.removeItem(SESSION_KEY);
@@ -177,6 +207,10 @@ const useMeetingStore = create((set, get) => ({
       isBlurred: false,
       isRecording: false,
       recordingError: null,
+      pinnedSocketId: null,
+      reactions: [],
+      isRoomLocked: false,
+      passwordRequired: false,
     });
   },
 }));

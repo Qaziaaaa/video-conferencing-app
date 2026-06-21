@@ -22,6 +22,7 @@ const Home = () => {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const [waitingRoomEnabled, setWaitingRoomEnabled] = useState(false);
+  const [meetingPassword, setMeetingPassword] = useState('');
 
   const handleCreate = async () => {
     if (!token) {
@@ -37,7 +38,7 @@ const Home = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ waitingRoomEnabled }),
+        body: JSON.stringify({ waitingRoomEnabled, password: meetingPassword || null }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -180,15 +181,26 @@ const Home = () => {
             </form>
           </div>
 
-          <label className="inline-flex items-center justify-center gap-2 text-sm text-text-3 cursor-pointer hover:text-text-2 transition-colors duration-200">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <label className="inline-flex items-center justify-center gap-2 text-sm text-text-3 cursor-pointer hover:text-text-2 transition-colors duration-200">
+              <input
+                type="checkbox"
+                checked={waitingRoomEnabled}
+                onChange={(e) => setWaitingRoomEnabled(e.target.checked)}
+                className="w-4 h-4 rounded border-white/20 bg-black/20 text-accent focus:ring-accent/50 focus:ring-offset-0"
+              />
+              Waiting room
+            </label>
+
             <input
-              type="checkbox"
-              checked={waitingRoomEnabled}
-              onChange={(e) => setWaitingRoomEnabled(e.target.checked)}
-              className="w-4 h-4 rounded border-white/20 bg-black/20 text-accent focus:ring-accent/50 focus:ring-offset-0"
+              type="text"
+              placeholder="Meeting password (optional)"
+              value={meetingPassword}
+              onChange={(e) => setMeetingPassword(e.target.value)}
+              maxLength={20}
+              className="w-full sm:w-56 bg-surface-2 border border-border-2 rounded-xl px-4 py-2 text-sm text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200"
             />
-            Enable waiting room
-          </label>
+          </div>
 
           {shareUrl && (
             <div className="flex items-center gap-2 bg-surface border border-border-2 rounded-xl px-4 py-3 max-w-md mx-auto animate-[fadeIn_0.2s_ease-out]">

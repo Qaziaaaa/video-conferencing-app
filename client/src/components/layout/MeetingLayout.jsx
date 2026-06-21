@@ -17,12 +17,14 @@ const MeetingLayout = ({
   onToggleHand,
   onToggleScreenShare,
   onToggleRecording,
+  onReact,
+  onToggleLock,
   onLeave,
   onKickParticipant,
 }) => {
   const { isChatOpen, toggleChat, unreadCount } = useChatStore();
   const { isParticipantsOpen, toggleParticipants, isConfirmLeaveOpen, showConfirmLeave, hideConfirmLeave } = useUIStore();
-  const { isMicOn, isCamOn, isHandRaised, isScreenSharing, isRecording, participants, meetingId, mediaError } = useMeetingStore();
+  const { isMicOn, isCamOn, isHandRaised, isScreenSharing, isRecording, isRoomLocked, isHost, participants, meetingId, mediaError } = useMeetingStore();
 
   const participantCount = Object.keys(participants).length;
 
@@ -71,6 +73,8 @@ const MeetingLayout = ({
           isRecording={isRecording}
           isChatOpen={isChatOpen}
           isParticipantsOpen={isParticipantsOpen}
+          isRoomLocked={isRoomLocked}
+          isHost={isHost}
           unreadChatCount={unreadCount}
           participantCount={participantCount}
           onToggleMic={onToggleMic}
@@ -80,6 +84,8 @@ const MeetingLayout = ({
           onToggleRecording={onToggleRecording}
           onToggleChat={toggleChat}
           onToggleParticipants={toggleParticipants}
+          onReact={onReact}
+          onToggleLock={onToggleLock}
           onLeave={showConfirmLeave}
         />
       </div>

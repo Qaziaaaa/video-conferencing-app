@@ -1,5 +1,6 @@
 import React from 'react';
 import Tile from './Tile';
+import EmojiReaction from './EmojiReaction';
 import useMeetingStore from '../../store/useMeetingStore';
 
 export const getGridLayout = (count) => {
@@ -51,6 +52,7 @@ const VideoGrid = ({ onKickParticipant }) => {
     return (
       <div className="flex flex-col md:flex-row h-full gap-3">
         <div className="flex-1 relative min-h-0 min-w-0 aspect-video md:aspect-auto">
+          <EmojiReaction />
           <Tile
             participantId={activeScreenShareSocketId}
             displayName={sharerParticipant?.displayName || 'Unknown'}

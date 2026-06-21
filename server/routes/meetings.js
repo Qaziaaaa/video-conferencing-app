@@ -11,7 +11,7 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 // POST /api/meetings — create a new meeting (JWT required)
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { waitingRoomEnabled = false } = req.body;
+    const { waitingRoomEnabled = false, password = null } = req.body;
     const meetingId = generateMeetingId();
 
     // hostSocketId is not known at creation time (socket connects later)
@@ -21,6 +21,7 @@ router.post('/', authMiddleware, async (req, res) => {
       hostSocketId: 'pending',
       hostUserId: req.user.userId,
       waitingRoomEnabled: Boolean(waitingRoomEnabled),
+      password: password ? String(password) : null,
     });
 
     const shareUrl = `${CLIENT_ORIGIN}/meeting/${meetingId}`;
@@ -49,6 +50,7 @@ router.get('/:meetingId', async (req, res) => {
       participantCount: meeting.participantCount,
       status: meeting.endedAt ? 'ended' : 'active',
       waitingRoomEnabled: meeting.waitingRoomEnabled,
+      hasPassword: !!meeting.password,
       createdAt: meeting.createdAt,
     });
   } catch (err) {

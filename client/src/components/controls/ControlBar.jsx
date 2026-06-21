@@ -9,7 +9,11 @@ import {
   PhoneOff,
   Wand2,
   Circle,
+  Lock,
+  Unlock,
+  Pin,
 } from 'lucide-react';
+import ReactionPicker from './ReactionPicker';
 
 const ControlButton = ({
   onClick,
@@ -58,6 +62,8 @@ const ControlBar = ({
   isParticipantsOpen,
   unreadChatCount,
   participantCount,
+  isRoomLocked,
+  isHost,
   onToggleMic,
   onToggleCam,
   onToggleHand,
@@ -66,10 +72,12 @@ const ControlBar = ({
   onToggleRecording,
   onToggleChat,
   onToggleParticipants,
+  onReact,
+  onToggleLock,
   onLeave,
 }) => {
   return (
-    <div className="flex items-center justify-center gap-1.5 px-2 sm:px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border overflow-x-auto custom-scrollbar">
+    <div className="flex items-center justify-start md:justify-center gap-1.5 px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border overflow-x-auto custom-scrollbar">
       <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03] shrink-0">
         <ControlButton
           onClick={onToggleMic}
@@ -126,6 +134,10 @@ const ControlBar = ({
         >
           <Circle size={18} className={isRecording ? 'animate-[pulseRecording_1.5s_ease-in-out_infinite]' : ''} />
         </ControlButton>
+
+        <div className="w-px h-6 bg-white/[0.04] mx-0.5" />
+
+        <ReactionPicker onReact={onReact} />
       </div>
 
       <div className="w-3" />
@@ -150,6 +162,18 @@ const ControlBar = ({
         >
           <Users size={18} />
         </ControlButton>
+
+        {isHost && (
+          <ControlButton
+            onClick={onToggleLock}
+            ariaLabel={isRoomLocked ? 'Unlock meeting' : 'Lock meeting'}
+            active={true}
+            toggled={isRoomLocked}
+            className={isRoomLocked ? 'bg-warning-soft text-warning hover:bg-warning/20' : ''}
+          >
+            {isRoomLocked ? <Lock size={18} /> : <Unlock size={18} />}
+          </ControlButton>
+        )}
       </div>
 
       <div className="w-3" />

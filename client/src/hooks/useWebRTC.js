@@ -207,7 +207,10 @@ export const useWebRTC = () => {
       }
 
       hasJoinedRef.current = true;
-      socket.emit('join-room', { meetingId, displayName });
+      const savedPassword = sessionStorage.getItem('meeting_password') || undefined;
+      socket.emit('join-room', { meetingId, displayName, password: savedPassword });
+      // Clear stored password after use so reconnects re-prompt
+      if (savedPassword) sessionStorage.removeItem('meeting_password');
     });
 
     // Server sends back our room info + existing participants list
