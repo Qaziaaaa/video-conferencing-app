@@ -1,10 +1,33 @@
 const Meeting = require('../models/Meeting');
+const { lockedRooms } = require('./adminHandlers');
 
 const MAX_PARTICIPANTS = 4;
 
+// Check if a socket has permission to handle password
+const checkPassword = async (socket, meetingId, password) => {
+  try {
+    const meeting = await Meeting.findOne({ meetingId });
+    if (!meeting) return false;
+    if (!meeting.password) return true;
+    return meeting.password === password;
+  } catch {
+    return false;
+  }
+};
+
 const registerRoomHandlers = (io, socket, rooms) => {
-  // join-room: { meetingId, displayName }
-  socket.on('join-room', async ({ meetingId, displayName }) => {
+  // check-password: verify meeting password
+  socket.on('check-password', async ({ meetingId, password }, callback) => {
+    const valid = await checkPassword(socket, meetingId, password);
+    if (valid) {
+      socket.data.passwordEntered = true;
+    }
+    if (typeof callback === 'function') {
+      callback(valid);
+    }
+  });
+  // join-room: { meetingId, displayName, password? }
+  socket.on('join-room', async ({ meetingId, displayName, password }) => {
     try {
       if (!meetingId || !displayName) {
         socket.emit('error-msg', { message: 'meetingId and displayName are required' });
@@ -18,13 +41,27 @@ const registerRoomHandlers = (io, socket, rooms) => {
         return;
       }
 
+      // Check password
+      if (meeting.password && !room.has(socket.id)) {
+        if (meeting.password !== password) {
+          socket.emit('password-required', {});
+          return;
+        }
+      }
+
       // Get or create room participant map
       if (!rooms.has(meetingId)) {
         rooms.set(meetingId, new Map());
       }
       const room = rooms.get(meetingId);
 
-      // Enforce 8-participant limit
+      // Check if room is locked (only allow re-connecting participants)
+      if (lockedRooms.has(meetingId) && !room.has(socket.id)) {
+        socket.emit('room-locked', {});
+        return;
+      }
+
+      // Enforce 4-participant limit
       if (room.size >= MAX_PARTICIPANTS) {
         socket.emit('room-full', {});
         return;

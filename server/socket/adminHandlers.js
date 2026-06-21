@@ -1,6 +1,8 @@
 /**
- * Admin handlers: kick-participant
+ * Admin handlers: kick-participant, mute-all, lock-room
  */
+const lockedRooms = new Set();
+
 const registerAdminHandlers = (io, socket, rooms) => {
   // kick-participant: { meetingId, targetSocketId }
   socket.on('kick-participant', ({ meetingId, targetSocketId }) => {
@@ -37,6 +39,48 @@ const registerAdminHandlers = (io, socket, rooms) => {
 
     console.log(`[ADMIN] ${socket.id} kicked ${targetSocketId} from ${meetingId}`);
   });
+
+  // mute-all: host mutes all participants
+  socket.on('mute-all', ({ meetingId }) => {
+    if (!meetingId) return;
+    const room = rooms.get(meetingId);
+    if (!room) return;
+
+    const senderMeta = room.get(socket.id);
+    if (!senderMeta || !senderMeta.isHost) {
+      socket.emit('error-msg', { message: 'Only the host can mute all' });
+      return;
+    }
+
+    socket.to(meetingId).emit('mute-participant', {});
+  });
+
+  // lock-room: host locks the room (no new joiners)
+  socket.on('lock-room', ({ meetingId }) => {
+    if (!meetingId) return;
+    const room = rooms.get(meetingId);
+    if (!room) return;
+    const senderMeta = room.get(socket.id);
+    if (!senderMeta || !senderMeta.isHost) {
+      socket.emit('error-msg', { message: 'Only the host can lock the meeting' });
+      return;
+    }
+    lockedRooms.add(meetingId);
+    io.to(meetingId).emit('room-locked', {});
+  });
+
+  socket.on('unlock-room', ({ meetingId }) => {
+    lockedRooms.delete(meetingId);
+    io.to(meetingId).emit('room-unlocked', {});
+  });
+
+  // Check lock status
+  socket.on('is-room-locked', ({ meetingId }, callback) => {
+    callback(lockedRooms.has(meetingId));
+  });
 };
+
+module.exports = registerAdminHandlers;
+module.exports.lockedRooms = lockedRooms;
 
 module.exports = registerAdminHandlers;

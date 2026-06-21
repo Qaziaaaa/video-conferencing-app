@@ -32,6 +32,10 @@ const MeetingSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  password: {
+    type: String,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('Meeting', MeetingSchema);

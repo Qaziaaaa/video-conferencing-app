@@ -23,6 +23,9 @@ const PreJoinLobby = () => {
   const [isMicOn, setIsMicOn] = useState(true);
   const [joining, setJoining] = useState(false);
   const [started, setStarted] = useState(false);
+  const [meetingData, setMeetingData] = useState(null);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const validate = async () => {
@@ -32,6 +35,8 @@ const PreJoinLobby = () => {
           navigate('/meeting-not-found', { replace: true });
           return;
         }
+        const data = await res.json();
+        setMeetingData(data);
         setMeetingValid(true);
       } catch {
         setMeetingValid(true);
@@ -93,9 +98,20 @@ const PreJoinLobby = () => {
     setIsMicOn((v) => !v);
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (!displayName.trim()) return;
     setJoining(true);
+    setPasswordError('');
+
+    if (meetingData?.hasPassword && !passwordInput.trim()) {
+      setPasswordError('Password is required');
+      setJoining(false);
+      return;
+    }
+
+    if (meetingData?.hasPassword && meetingData.hasPassword) {
+      sessionStorage.setItem('meeting_password', passwordInput.trim());
+    }
 
     setMeetingId(meetingId);
     setDisplayName(displayName.trim());
@@ -213,6 +229,26 @@ const PreJoinLobby = () => {
                 className="w-full bg-surface border border-border-2 rounded-xl px-4 py-3 text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 text-sm"
               />
             </div>
+
+            {meetingData?.hasPassword && (
+              <div>
+                <label className="block text-sm font-medium text-text-2 mb-1.5">
+                  Meeting password
+                </label>
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && nameValid && handleJoin()}
+                  maxLength={20}
+                  placeholder="Enter meeting password"
+                  className="w-full bg-surface border border-border-2 rounded-xl px-4 py-3 text-white placeholder-text-4 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 text-sm"
+                />
+                {passwordError && (
+                  <p className="text-xs text-danger mt-1.5">{passwordError}</p>
+                )}
+              </div>
+            )}
 
             <button
               onClick={handleJoin}

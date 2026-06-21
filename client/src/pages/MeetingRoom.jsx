@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MeetingLayout from '../components/layout/MeetingLayout';
 import { useWebRTC } from '../hooks/useWebRTC';
@@ -33,6 +33,8 @@ const MeetingRoom = () => {
 
   // ── WebRTC (mesh peer connections + socket) ──────────────────────────────
   const { socket, replaceVideoTrack, originalCameraTrackRef } = useWebRTC();
+  const socketRef = useRef(socket);
+  socketRef.current = socket;
 
   // ── Supporting hooks ─────────────────────────────────────────────────────
   useChat(socket);
@@ -95,6 +97,53 @@ const MeetingRoom = () => {
     }
   }, [isScreenSharing, startScreenShare, stopScreenShare]);
 
+  // ── Emoji reaction ─────────────────────────────────────────────────────────
+  const handleReact = useCallback((emoji) => {
+    socket?.emit('emoji-reaction', { meetingId, emoji, displayName });
+  }, [socket, meetingId, displayName]);
+
+  // ── Lock/unlock meeting ─────────────────────────────────────────────────────
+  const handleToggleLock = useCallback(() => {
+    const { isRoomLocked: locked } = useMeetingStore.getState();
+    if (locked) {
+      socket?.emit('unlock-room', { meetingId });
+      useMeetingStore.getState().setRoomLocked(false);
+    } else {
+      socket?.emit('lock-room', { meetingId });
+      useMeetingStore.getState().setRoomLocked(true);
+    }
+  }, [socket, meetingId]);
+
+  // ── Listen for socket events (mute, lock, reactions) ────────────────────────
+  useEffect(() => {
+    if (!socket) return;
+
+    const onMute = () => {
+      useMeetingStore.getState().toggleMic();
+    };
+    const onLocked = () => {
+      useMeetingStore.getState().setRoomLocked(true);
+    };
+    const onUnlocked = () => {
+      useMeetingStore.getState().setRoomLocked(false);
+    };
+    const onEmoji = ({ emoji, socketId, displayName: name }) => {
+      useMeetingStore.getState().addReaction(emoji, socketId, name);
+    };
+
+    socket.on('mute-participant', onMute);
+    socket.on('room-locked', onLocked);
+    socket.on('room-unlocked', onUnlocked);
+    socket.on('emoji-reaction', onEmoji);
+
+    return () => {
+      socket.off('mute-participant', onMute);
+      socket.off('room-locked', onLocked);
+      socket.off('room-unlocked', onUnlocked);
+      socket.off('emoji-reaction', onEmoji);
+    };
+  }, [socket]);
+
   // ── Kick participant ──────────────────────────────────────────────────────
   const handleKickParticipant = useCallback((targetSocketId) => {
     socket?.emit('kick-participant', { meetingId, targetSocketId });
@@ -123,6 +172,22 @@ const MeetingRoom = () => {
     navigate('/');
   }, [socket, meetingId, localStream, hideConfirmLeave, resetMeeting, navigate]);
 
+  // ── Clean up meeting state on unmount (including back button) ────────────
+  useEffect(() => {
+    return () => {
+      const state = useMeetingStore.getState();
+      if (state.meetingId) {
+        if (state.localStream) {
+          state.localStream.getTracks().forEach((t) => t.stop());
+        }
+        socketRef.current?.disconnect();
+        state.reset();
+        useChatStore.getState().reset();
+        useUIStore.getState().reset();
+      }
+    };
+  }, []);
+
   // ── Redirect if no meetingId (e.g. direct navigation) ────────────────────
   useEffect(() => {
     if (!meetingId) {
@@ -140,6 +205,8 @@ const MeetingRoom = () => {
       onToggleHand={handleToggleHand}
       onToggleScreenShare={handleToggleScreenShare}
       onToggleRecording={toggleRecording}
+      onReact={handleReact}
+      onToggleLock={handleToggleLock}
       onLeave={handleLeave}
       onKickParticipant={handleKickParticipant}
     />

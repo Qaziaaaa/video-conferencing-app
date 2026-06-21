@@ -54,7 +54,7 @@ describe('Home', () => {
 
   test('shows waiting room checkbox', () => {
     renderHome();
-    expect(screen.getByText('Enable waiting room')).toBeInTheDocument();
+    expect(screen.getByText('Waiting room')).toBeInTheDocument();
   });
 
   test('create meeting shows loading state and calls API', async () => {
@@ -191,7 +191,7 @@ describe('Home', () => {
       json: async () => ({ meetingId: 'm1', shareUrl: 'http://localhost:5000/meeting/m1' }),
     });
     renderHome();
-    await user.click(screen.getByText('Enable waiting room'));
+    await user.click(screen.getByText('Waiting room'));
     await user.click(screen.getByText('New meeting'));
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(

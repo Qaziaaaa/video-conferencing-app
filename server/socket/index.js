@@ -7,6 +7,7 @@ const registerMediaHandlers = require('./mediaHandlers');
 const registerChatHandlers = require('./chatHandlers');
 const registerHandHandlers = require('./handHandlers');
 const registerAdminHandlers = require('./adminHandlers');
+const registerEmojiHandlers = require('./emojiHandlers');
 const registerWaitingRoomHandlers = require('./waitingRoomHandlers');
 
 // In-memory room state: roomId -> Map<socketId, participantMeta>
@@ -50,6 +51,7 @@ const initSocket = (server) => {
     registerMediaHandlers(io, socket, rooms);
     registerChatHandlers(io, socket, rooms);
     registerHandHandlers(io, socket, rooms);
+    registerEmojiHandlers(io, socket, rooms);
     registerAdminHandlers(io, socket, rooms);
     registerWaitingRoomHandlers(io, socket, rooms);
 
