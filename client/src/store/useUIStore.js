@@ -6,6 +6,7 @@ const useUIStore = create((set, get) => ({
   isParticipantsOpen: false,
   isConfirmLeaveOpen: false,
   notifications: [], // [{ id, message, createdAt }]
+  isBannerVisible: true,
 
   toggleParticipants: () =>
     set((state) => ({ isParticipantsOpen: !state.isParticipantsOpen })),
@@ -15,6 +16,8 @@ const useUIStore = create((set, get) => ({
 
   showConfirmLeave: () => set({ isConfirmLeaveOpen: true }),
   hideConfirmLeave: () => set({ isConfirmLeaveOpen: false }),
+
+  dismissBanner: () => set({ isBannerVisible: false }),
 
   addNotification: (message) => {
     const id = `notif-${++notificationIdCounter}`;
@@ -42,6 +45,7 @@ const useUIStore = create((set, get) => ({
       isParticipantsOpen: false,
       isConfirmLeaveOpen: false,
       notifications: [],
+      isBannerVisible: true,
     }),
 }));
 

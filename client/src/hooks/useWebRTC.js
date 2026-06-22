@@ -170,7 +170,7 @@ export const useWebRTC = () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
-          video: { width: 1280, height: 720 },
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
         });
         localStreamRef.current = stream;
         const videoTrack = stream.getVideoTracks()[0];
@@ -445,7 +445,7 @@ export const useWebRTC = () => {
       } else if (useMeetingStore.getState().dominantSpeakerSocketId) {
         useMeetingStore.getState().setDominantSpeaker(null);
       }
-    }, 500);
+    }, 1000);
 
     // ── Cleanup ────────────────────────────────────────────────────────────────
     const cleanup = () => {

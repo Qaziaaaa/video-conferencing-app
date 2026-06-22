@@ -170,7 +170,7 @@ const useMeetingStore = create((set, get) => ({
 
   addReaction: (emoji, socketId, displayName) => {
     const id = `reaction-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-    const reaction = { id, emoji, socketId, displayName, createdAt: Date.now() };
+    const reaction = { id, emoji, socketId, displayName, createdAt: Date.now(), left: 15 + Math.random() * 70 };
     set((state) => ({ reactions: [...state.reactions, reaction] }));
     // Auto-remove after 2s
     setTimeout(() => {

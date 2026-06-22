@@ -77,8 +77,9 @@ const ControlBar = ({
   onLeave,
 }) => {
   return (
-    <div className="flex items-center justify-start md:justify-center gap-1.5 px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border overflow-x-auto custom-scrollbar">
-      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03] shrink-0">
+    <div className="flex flex-wrap items-center justify-start md:justify-center gap-1.5 px-4 py-3 bg-surface/80 backdrop-blur-xl border-t border-border">
+      {/* Primary controls: mic + camera — order-first so they appear at the top when wrapping */}
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03] order-first sm:order-none">
         <ControlButton
           onClick={onToggleMic}
           ariaLabel={isMicOn ? 'Mute microphone (M)' : 'Unmute microphone (M)'}
@@ -94,9 +95,10 @@ const ControlBar = ({
         >
           {isCamOn ? <Video size={18} /> : <VideoOff size={18} />}
         </ControlButton>
+      </div>
 
-        <div className="w-px h-6 bg-white/[0.04] mx-0.5" />
-
+      {/* Secondary controls: screen share, hand, blur, recording, reactions */}
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
         <ControlButton
           onClick={onToggleScreenShare}
           ariaLabel={isScreenSharing ? 'Stop presenting' : 'Present screen'}
@@ -142,7 +144,8 @@ const ControlBar = ({
 
       <div className="w-3" />
 
-      <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
+      {/* Panel controls: chat, participants, lock */}
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 px-2 py-1 bg-white/[0.03] rounded-xl border border-white/[0.03]">
         <ControlButton
           onClick={onToggleChat}
           ariaLabel={isChatOpen ? 'Close chat' : 'Open chat'}
@@ -178,10 +181,12 @@ const ControlBar = ({
 
       <div className="w-3" />
 
+      {/* Leave button — order-first so it appears at the top when wrapping */}
       <ControlButton
         onClick={onLeave}
         ariaLabel="Leave meeting"
         danger={true}
+        className="order-first sm:order-none"
       >
         <PhoneOff size={18} />
       </ControlButton>

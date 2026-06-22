@@ -102,4 +102,25 @@ describe('ControlBar', () => {
     render(<ControlBar {...defaultProps} isChatOpen={true} />);
     expect(screen.getByLabelText(/close chat/i)).toBeInTheDocument();
   });
+
+  describe('tap target sizes (Task 7.6)', () => {
+    const tapTargetClasses = ['w-11', 'h-11', 'min-w-[44px]', 'min-h-[44px]'];
+
+    test.each([
+      ['mic', /mute microphone/i],
+      ['camera', /turn off camera/i],
+      ['screen share', /present screen/i],
+      ['hand', /raise hand/i],
+      ['blur', /enable background blur/i],
+      ['chat', /open chat/i],
+      ['participants', /show participants/i],
+      ['leave', /leave meeting/i],
+    ])('%s button has 44px touch target classes', (_, label) => {
+      render(<ControlBar {...defaultProps} />);
+      const btn = screen.getByLabelText(label);
+      tapTargetClasses.forEach((cls) => {
+        expect(btn.className).toContain(cls);
+      });
+    });
+  });
 });

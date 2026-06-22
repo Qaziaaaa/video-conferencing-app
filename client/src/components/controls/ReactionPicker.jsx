@@ -26,7 +26,7 @@ const ReactionPicker = ({ onReact }) => {
         <Smile size={18} />
       </button>
       {open && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-surface border border-border-2 rounded-xl p-2 shadow-2xl flex gap-1 animate-[fadeIn_0.15s_ease-out]">
+        <div className="absolute bottom-full left-0 sm:left-1/2 sm:-translate-x-1/2 mb-2 bg-surface border border-border-2 rounded-xl p-2 shadow-2xl flex gap-1 animate-[fadeIn_0.15s_ease-out]">
           {EMOJIS.map((emoji) => (
             <button
               key={emoji}

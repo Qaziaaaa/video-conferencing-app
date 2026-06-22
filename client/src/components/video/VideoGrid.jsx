@@ -14,7 +14,7 @@ export const getGridLayout = (count) => {
 const colsClass = {
   1: 'grid-cols-1',
   2: 'grid-cols-2',
-  3: 'grid-cols-2',
+  3: 'grid-cols-3',
   4: 'grid-cols-2',
 };
 
@@ -122,9 +122,11 @@ const VideoGrid = ({ onKickParticipant }) => {
   }
 
   const { cols } = getGridLayout(totalCount);
+  const baseColsClass = colsClass[cols] || 'grid-cols-2';
+  const responsiveColsClass = `grid-cols-1 sm:${baseColsClass}`;
 
   return (
-    <div className={`grid ${colsClass[cols] || 'grid-cols-2'} gap-3 h-full auto-rows-fr relative`}>
+    <div className={`grid ${responsiveColsClass} gap-3 h-full auto-rows-fr relative`} style={{ touchAction: 'pan-y' }}>
       <EmojiReaction />
       {allParticipantIds.map((id) => {
         const p = participants[id];

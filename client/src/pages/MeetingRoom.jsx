@@ -99,11 +99,13 @@ const MeetingRoom = () => {
 
   // ── Emoji reaction ─────────────────────────────────────────────────────────
   const handleReact = useCallback((emoji) => {
+    // Read current values from store at call time to avoid stale closure
+    const { displayName: currentName, meetingId: currentMeetingId } = useMeetingStore.getState();
     // Optimistic local update — appears instantly without server round-trip
-    useMeetingStore.getState().addReaction(emoji, socketRef.current?.id, displayName);
+    useMeetingStore.getState().addReaction(emoji, socketRef.current?.id, currentName);
     // Also send to remote peers
-    socketRef.current?.emit('emoji-reaction', { meetingId, emoji, displayName });
-  }, [meetingId, displayName]);
+    socketRef.current?.emit('emoji-reaction', { meetingId: currentMeetingId, emoji, displayName: currentName });
+  }, []); // no closed-over values from render scope — reads store directly at call time
 
   // ── Lock/unlock meeting ─────────────────────────────────────────────────────
   const handleToggleLock = useCallback(() => {
@@ -176,6 +178,10 @@ const MeetingRoom = () => {
   }, [socket, meetingId, localStream, hideConfirmLeave, resetMeeting, navigate]);
 
   // ── Clean up meeting state on unmount (including back button) ────────────
+  // NOTE: We deliberately do NOT reset stores here.  React StrictMode double-
+  // mount would reset meetingId and trigger the redirect effect below before
+  // the second mount.  Stores are fully reset in handleLeave (explicit leave)
+  // and stale data is overwritten on the next MeetingRoom mount via useWebRTC.
   useEffect(() => {
     return () => {
       const state = useMeetingStore.getState();
@@ -184,9 +190,6 @@ const MeetingRoom = () => {
           state.localStream.getTracks().forEach((t) => t.stop());
         }
         socketRef.current?.disconnect();
-        state.reset();
-        useChatStore.getState().reset();
-        useUIStore.getState().reset();
       }
     };
   }, []);

@@ -38,4 +38,31 @@ describe('Tile', () => {
     render(<Tile participantId="p1" displayName="Alice" onKick={vi.fn()} />);
     expect(screen.getByText('Remove')).toBeInTheDocument();
   });
+
+  describe('muted prop for VideoPlayer (Task 7.11)', () => {
+    const mockStream = {
+      getTracks: () => [],
+      getVideoTracks: () => [{ kind: 'video' }],
+      getAudioTracks: () => [],
+      active: true,
+    };
+
+    test('local tile passes muted={true} to video element', () => {
+      const { container } = render(
+        <Tile participantId="p1" displayName="Alice" isLocal={true} stream={mockStream} />
+      );
+      const video = container.querySelector('video');
+      expect(video).toBeTruthy();
+      expect(video.muted).toBe(true);
+    });
+
+    test('remote tile passes muted={false} to video element', () => {
+      const { container } = render(
+        <Tile participantId="p2" displayName="Bob" stream={mockStream} />
+      );
+      const video = container.querySelector('video');
+      expect(video).toBeTruthy();
+      expect(video.muted).toBe(false);
+    });
+  });
 });

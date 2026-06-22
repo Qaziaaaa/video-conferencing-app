@@ -257,4 +257,26 @@ describe('PreJoinLobby', () => {
     expect(mockStream.getTracks()[0].stop).toHaveBeenCalled();
     expect(mockStream.getTracks()[1].stop).toHaveBeenCalled();
   });
+
+  test('does NOT stop stream tracks on unmount after joining (streamRef null-out fix)', async () => {
+    const user = userEvent.setup();
+    global.fetch = vi.fn().mockResolvedValue({ status: 200, json: async () => ({}) });
+    const mockStream = createMockStream();
+    navigator.mediaDevices.getUserMedia = vi.fn().mockResolvedValue(mockStream);
+    useAuthStore.getState().setAuth('tok', 'uid', 'e@m.com', 'Alice');
+    const { unmount } = renderPreJoinLobby('m1');
+    await waitFor(() => screen.getByText('Ready to join?'));
+    await user.click(screen.getByText('Start camera'));
+    await waitFor(() => screen.getByLabelText('Mute microphone'));
+    const input = screen.getByPlaceholderText('Enter your display name');
+    await user.clear(input);
+    await user.type(input, 'Alice');
+    await user.click(screen.getByText('Join now'));
+    await waitFor(() => {
+      expect(useMeetingStore.getState().meetingId).toBe('m1');
+    });
+    unmount();
+    expect(mockStream.getTracks()[0].stop).not.toHaveBeenCalled();
+    expect(mockStream.getTracks()[1].stop).not.toHaveBeenCalled();
+  });
 });

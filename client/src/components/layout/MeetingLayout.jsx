@@ -23,17 +23,20 @@ const MeetingLayout = ({
   onKickParticipant,
 }) => {
   const { isChatOpen, toggleChat, unreadCount } = useChatStore();
-  const { isParticipantsOpen, toggleParticipants, isConfirmLeaveOpen, showConfirmLeave, hideConfirmLeave } = useUIStore();
+  const { isParticipantsOpen, toggleParticipants, isConfirmLeaveOpen, showConfirmLeave, hideConfirmLeave, isBannerVisible, dismissBanner } = useUIStore();
   const { isMicOn, isCamOn, isHandRaised, isScreenSharing, isRecording, isRoomLocked, isHost, participants, meetingId, mediaError } = useMeetingStore();
 
   const participantCount = Object.keys(participants).length;
 
   return (
     <div className="flex flex-col h-screen text-white overflow-hidden relative bg-base">
-      <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-accent/10 border-b border-accent/20 text-[11px] text-accent font-medium">
-        <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-        Beta — max 4 participants. Feedback? <a href="#" className="underline underline-offset-2 hover:text-white transition-colors">Let us know</a>
-      </div>
+      {isBannerVisible && (
+        <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-accent/10 border-b border-accent/20 text-[11px] text-accent font-medium" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          Beta — max 4 participants. Feedback? <a href="#" className="underline underline-offset-2 hover:text-white transition-colors">Let us know</a>
+          <button onClick={dismissBanner} aria-label="Dismiss beta banner" className="ml-2 text-accent/70 hover:text-accent transition-colors leading-none">×</button>
+        </div>
+      )}
       {mediaError && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 bg-danger/90 backdrop-blur-xl border border-danger/30 rounded-xl shadow-2xl max-w-md animate-[fadeIn_0.2s_ease-out]">
           <p className="text-sm font-medium text-white">{mediaError}</p>
@@ -64,7 +67,7 @@ const MeetingLayout = ({
         )}
       </div>
 
-      <div className="relative z-10 flex-shrink-0">
+      <div className="relative z-10 flex-shrink-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <ControlBar
           isMicOn={isMicOn}
           isCamOn={isCamOn}
